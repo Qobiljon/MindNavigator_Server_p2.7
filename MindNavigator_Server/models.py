@@ -47,7 +47,7 @@ class Event(models.Model):
     stressType = models.CharField(max_length=32)
     stressCause = models.CharField(max_length=128)
     repeatMode = models.SmallIntegerField()
-    eventReminder = models.SmallIntegerField(default=0)
+    eventReminder = models.SmallIntegerField()
     objects = EventManager()
 
     def __json__(self):

@@ -1,0 +1,151 @@
+Server API Documentation for the project "MindNavigator"
+Author:         Kevin (Kobiljon Toshnazarov)
+Last Edited:    May 25th, 2018
+
+
+Note:
+Return value 'result' is an integer field, and is always returned in a json object from all APIs.
+Return values are: -1(bad request), 0(success), 1(failure)
+
+
+# -*-*-*-*-*-*-*-*-*-*-*-*- Template API (GET, POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:
+API URL:                        http://165.246.43.162:4444/~
+Required json header fields:    Content-Type (application/json)
+Required json body fields:
+Additional return fields:
+
+
+
+1 -*-*-*-*-*-*-*-*-*-*-*-*- User Register API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Register a new user in a system
+API URL:                        http://165.246.43.162:4444/user_reg
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                first_name
+                                last_name
+
+
+2 -*-*-*-*-*-*-*-*-*-*-*-*- User Login API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Log a user in a system
+API URL:                        http://165.246.43.162:4444/user_lgn
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+
+
+3 -*-*-*-*-*-*-*-*-*-*-*-*- Event Create API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Create a new event in a system
+API URL:                        http://165.246.43.162:4444/event_crt
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                event_id (long)
+                                stressLevel (short)
+                                title (string, maxlen=128)
+                                startTime (long)
+                                endTime (long)
+                                intervention (string, maxlen=128)
+                                interventionReminder (short)
+                                stressType (string, maxlen=32)
+                                stressCause (string, maxlen=128)
+                                isShared (boolean)
+                                repeatMode (short)
+                                eventReminder (short)
+
+
+4 -*-*-*-*-*-*-*-*-*-*-*-*- Event Edit API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Edit an existing event in a system
+API URL:                        http://165.246.43.162:4444/event_edt
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                event_id (long)
+                                stressLevel (short, optional)
+                                title (string, maxlen=128, optional)
+                                startTime (long, optional)
+                                endTime (long, optional)
+                                intervention (string, maxlen=128, optional)
+                                interventionReminder (short, optional)
+                                stressType (string, maxlen=32, optional)
+                                stressCause (string, maxlen=128, optional)
+                                isShared (boolean, optional)
+                                repeatMode (short, optional)
+                                eventReminder (short, optional)
+
+
+5 -*-*-*-*-*-*-*-*-*-*-*-*- Event Delete API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Delete an existing event from a system
+API URL:                        http://165.246.43.162:4444/event_del
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                even_id
+
+
+6 -*-*-*-*-*-*-*-*-*-*-*-*- Fetch Events API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Fetch events in a specified period
+API URL:                        http://165.246.43.162:4444/events_fetch
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username, password, period_from, period_till
+Additional return fields:
+
+
+7 -*-*-*-*-*-*-*-*-*-*-*-*- Intervention Create API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Create a new intervention in a system
+API URL:                        http://165.246.43.162:4444/interv_crt
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                interventionName (maxlen=128)
+
+
+8 -*-*-*-*-*-*-*-*-*-*-*-*- Fetch System Interventions API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Fetch system interventions from a system
+API URL:                        http://165.246.43.162:4444/interv_syst
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+Additional return fields:       names (string array)
+
+
+9 -*-*-*-*-*-*-*-*-*-*-*-*- Fetch Peer Interventions API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Fetch peer interventions from a system
+API URL:                        http://165.246.43.162:4444/interv_peer
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+Additional return fields:       names (string array)
+
+
+10 -*-*-*-*-*-*-*-*-*-*-*-*- Evaluation Submit API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Fetch peer interventions from a system
+API URL:                        http://165.246.43.162:4444/eval_subm
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                eventId
+                                interventionName
+                                startTime
+                                endTime
+                                eventDone
+                                interventionDone
+                                interventionDoneBefore
+                                recommend
+Additional return fields:       names (string array)
+
+
+11 -*-*-*-*-*-*-*-*-*-*-*-*- Feedback Submit API (POST): -*-*-*-*-*-*-*-*-*-*-*-*-
+Description:                    Fetch peer interventions from a system
+API URL:                        http://165.246.43.162:4444/feedb_subm
+Required json header fields:    Content-Type (application/json)
+Required json body fields:      username
+                                password
+                                eventTitle
+                                startTime
+                                endTime
+                                stressLevel
+                                stressLevelSunday
+                                reason
+Additional return fields:       names (string array)

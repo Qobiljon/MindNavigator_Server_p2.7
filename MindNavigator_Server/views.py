@@ -80,7 +80,7 @@ def handle_event_create(request):
     if 'username' in json_body and 'password' in json_body and 'event_id' in json_body and 'title' in json_body \
             and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body \
-            and 'repeatMode' in json_body:
+            and 'repeatMode' in json_body and 'eventReminder' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.all().filter(eventId=json_body['event_id']).exists() \
                 and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime']):
             Event.objects.create_event(
@@ -94,7 +94,8 @@ def handle_event_create(request):
                 interv_reminder=json_body['interventionReminder'],
                 stress_type=json_body['stressType'],
                 stress_cause=json_body['stressCause'],
-                repeat_mode=json_body['repeatMode']
+                repeat_mode=json_body['repeatMode'],
+                event_reminder=json_body['eventReminder']
             ).save()
             return Res(data={'result': RES_SUCCESS})
         else:
@@ -126,6 +127,8 @@ def handle_event_edit(request):
                 event.stressCause = json_body['stressCause']
             if 'repeatMode' in json_body:
                 event.repeatMode = json_body['repeatMode']
+            if 'eventReminder' in json_body:
+                event.eventReminder = json_body['eventReminder']
             event.save()
             return Res(data={'result': RES_SUCCESS})
         else:

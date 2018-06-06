@@ -109,15 +109,14 @@ class Evaluation(models.Model):
 
 
 class FeedbackManager(models.Manager):
-    def create_feedback(self, user, start_time, end_time, done):
-        return self.create(user=user, startTime=start_time, endTime=end_time, done=done)
+    def create_feedback(self, user, event_id, done):
+        return self.create(user=user, eventId=event_id, done=done)
 
 
 class Feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     eventTitle = models.CharField(max_length=128)
-    startTime = models.BigIntegerField()
-    endTime = models.BigIntegerField()
+    eventId = models.BigIntegerField()
     stressLevel = models.IntegerField()
     stressLevelSunday = models.IntegerField()
     reason = models.CharField(max_length=128)

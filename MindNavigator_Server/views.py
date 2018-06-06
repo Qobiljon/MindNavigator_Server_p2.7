@@ -247,12 +247,11 @@ def handle_evaluation_submit(request):
 @api_view(['POST'])
 def handle_feedback_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'done' in json_body:
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'done' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             Feedback.objects.create_feedback(
                 user=User.objects.get(username=json_body['username']),
-                start_time=json_body['startTime'],
-                end_time=json_body['endTime'],
+                event_id=json_body['eventId'],
                 done=json_body['done']
             ).save()
             return Res(data={'result': RES_SUCCESS})

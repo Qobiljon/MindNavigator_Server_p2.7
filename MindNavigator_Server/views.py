@@ -122,7 +122,7 @@ def handle_event_edit(request):
                 event.stressLevel = json_body['stressLevel']
             if 'title' in json_body:
                 event.title = json_body['title']
-            if 'startTime' in json_body and 'endTime' in json_body and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime'], except_id=event.id):
+            if 'startTime' in json_body and 'endTime' in json_body and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime'], except_id=event.eventId):
                 event.startTime = json_body['startTime']
                 event.endTime = json_body['endTime']
                 print('NOT OVERLAPS AND TIME "CHANGED')

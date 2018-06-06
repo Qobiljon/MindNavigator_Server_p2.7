@@ -73,7 +73,7 @@ class InterventionManager(models.Manager):
     SYSTEM = 'system'
 
     def create_intervention(self, name, intervention_type, private_username=None):
-        return self.create(name=name, interventionType=intervention_type, private_username=private_username)
+        return self.create(name=name, interventionType=intervention_type, privateUsername=private_username)
 
 
 class Intervention(models.Model):

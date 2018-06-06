@@ -241,7 +241,7 @@ def handle_evaluation_submit(request):
                 and Intervention.objects.filter(name=json_body['interventionName']).exists():
             Evaluation.objects.create_evaluation(
                 user=User.objects.get(username=json_body['username']),
-                event_id=json_body['eventId'],
+                event=Event.objects.get(eventId=json_body['eventId']),
                 intervention_name=json_body['interventionName'],
                 start_time=json_body['startTime'],
                 end_time=json_body['endTime'],

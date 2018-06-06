@@ -84,10 +84,10 @@ class Intervention(models.Model):
 
 
 class EvaluationManager(models.Manager):
-    def create_evaluation(self, user, event_id, intervention_name, start_time, end_time, real_stress_level, event_done, intervention_done, intervention_done_before, shared_intervention, interv_effectiveness):
+    def create_evaluation(self, user, event, intervention_name, start_time, end_time, real_stress_level, event_done, intervention_done, intervention_done_before, shared_intervention, interv_effectiveness):
         return self.create(
             user=user,
-            eventId=event_id,
+            event=event,
             interventionName=intervention_name,
             startTime=start_time,
             endTime=end_time,
@@ -102,7 +102,7 @@ class EvaluationManager(models.Manager):
 
 class Evaluation(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE)
-    eventId = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     interventionName = models.CharField(max_length=128)
     startTime = models.BigIntegerField()
     endTime = models.BigIntegerField()

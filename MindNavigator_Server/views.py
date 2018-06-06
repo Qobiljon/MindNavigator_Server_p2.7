@@ -4,6 +4,7 @@ import datetime
 from rest_framework.decorators import api_view
 from rest_framework.response import Response as Res
 from MindNavigator_Server.models import User, Event, Intervention, InterventionManager, Evaluation, Feedback
+from django.db.models import Q
 
 # region Constants
 RES_SUCCESS = 0
@@ -35,14 +36,21 @@ def time_add(_time, _add):
     return int("%02d%02d%02d%02d" % (time.year % 100, time.month, time.day, time.hour))
 
 
-def overlaps(user, start_time, end_time):
-    # lvl1 - start-time check
-    if Event.objects.all().filter(owner=user, startTime__range=(start_time, end_time - 1)).exists():
-        return True
-    elif Event.objects.all().filter(owner=user, endTime__range=(start_time + 1, end_time)).exists():
-        return True
-    elif Event.objects.all().filter(owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
-        return True
+def overlaps(user, start_time, end_time, except_id=None):
+    if except_id is None:
+        if Event.objects.all().filter(owner=user, startTime__range=(start_time, end_time - 1)).exists():
+            return True
+        elif Event.objects.all().filter(owner=user, endTime__range=(start_time + 1, end_time)).exists():
+            return True
+        elif Event.objects.all().filter(owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
+            return True
+    else:
+        if Event.objects.all().filter(~Q(eventId=except_id), owner=user, startTime__range=(start_time, end_time - 1)).exists():
+            return True
+        elif Event.objects.all().filter(~Q(eventId=except_id), owner=user, endTime__range=(start_time + 1, end_time)).exists():
+            return True
+        elif Event.objects.all().filter(~Q(eventId=except_id), owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
+            return True
 
 
 @api_view(['POST'])
@@ -110,12 +118,11 @@ def handle_event_edit(request):
     if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and Event.objects.all().filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
             event = Event.objects.get(eventId=json_body['event_id'])
-            event.delete()
             if 'stressLevel' in json_body:
                 event.stressLevel = json_body['stressLevel']
             if 'title' in json_body:
                 event.title = json_body['title']
-            if 'startTime' in json_body and 'endTime' in json_body and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime']):
+            if 'startTime' in json_body and 'endTime' in json_body and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime'], except_id=event.id):
                 event.startTime = json_body['startTime']
                 event.endTime = json_body['endTime']
                 print('NOT OVERLAPS AND TIME "CHANGED')

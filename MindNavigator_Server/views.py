@@ -128,7 +128,7 @@ def handle_event_edit(request):
             if 'intervention' in json_body:
                 event.intervention = json_body['intervention']
             if 'interventionReminder' in json_body:
-                event.intervention = json_body['interventionReminder']
+                event.interventionReminder = json_body['interventionReminder']
             if 'stressType' in json_body:
                 event.stressType = json_body['stressType']
             if 'stressCause' in json_body:

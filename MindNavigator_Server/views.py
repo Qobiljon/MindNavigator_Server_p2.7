@@ -190,7 +190,8 @@ def handle_intervention_create(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'interventionName' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.filter(name=json_body['interventionName']).exists():
-            Intervention.objects.create_intervention(name=json_body['interventionName'], intervention_type=InterventionManager.PEER, private_username=json_body['username']).save()
+            if not Intervention.objects.filter(name=json_body['interventionName'], privateUsername=None).exists():
+                Intervention.objects.create_intervention(name=json_body['interventionName'], intervention_type=InterventionManager.PEER, private_username=json_body['username']).save()
             return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})
@@ -236,7 +237,7 @@ def handle_evaluation_submit(request):
             and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body \
             and 'sharedIntervention' in json_body and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
-                and not Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists() \
+                and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists() \
                 and Intervention.objects.filter(name=json_body['interventionName']).exists():
             Evaluation.objects.create_evaluation(
                 user=User.objects.get(username=json_body['username']),
@@ -254,7 +255,7 @@ def handle_evaluation_submit(request):
             event = Event.objects.get(eventId=json_body['eventId'])
             event.evaluated = True
             event.save()
-            if json_body['sharedIntervention']:
+            if json_body['sharedIntervention'] and not Intervention.objects.filter(name=json_body['interventionName'], privateUsername=None).exists():
                 interv = Intervention.objects.get(name=json_body['interventionName'])
                 interv.privateUsername = None
                 interv.save()

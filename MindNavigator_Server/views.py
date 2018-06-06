@@ -287,9 +287,9 @@ def handle_feedback_submit(request):
 def handle_evaluation_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'eventId' in json_body:
-        cursor = Evaluation.objects.filter(user__username=json_body['username'], eventId=json_body['eventId'])
+        cursor = Evaluation.objects.filter(user__username=json_body['username'], event__eventId=json_body['eventId'])
         if cursor.exists():
-            return Res(data={'result': RES_SUCCESS, 'evaluation': Evaluation.objects.get(user__username=json_body['username'], eventId=json_body['eventId']).__json__()})
+            return Res(data={'result': RES_SUCCESS, 'evaluation': Evaluation.objects.get(user__username=json_body['username'], event__eventId=json_body['eventId']).__json__()})
         else:
             return Res(data={'result': RES_FAILURE})
     else:

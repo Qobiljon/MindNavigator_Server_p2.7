@@ -118,14 +118,16 @@ class Evaluation(models.Model):
         return {
             'userFullName': self.user.email,
             'username': self.user.username,
-            'eventId': self.eventId,
+            'eventId': self.event.eventId,
             'interventionName': self.interventionName,
             'startTime': self.startTime,
             'endTime': self.endTime,
-            'eventDone': self.eventDone,
+            'realStressLevel': self.realStressLevel,
+            'eventDone': self.realStressLevel,
             'interventionDone': self.interventionDone,
             'interventionDoneBefore': self.interventionDoneBefore,
-            'recommend': self.sharedIntervention
+            'sharedIntervention': self.sharedIntervention,
+            'intervEffectiveness': self.intervEffectiveness
         }
 
 

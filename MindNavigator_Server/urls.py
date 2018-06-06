@@ -36,10 +36,10 @@ urlpatterns = [
     url('eval_fetch$', views.handle_evaluation_fetch),
 ]
 
-# if Intervention.objects.all().count() == 0:
-#     Intervention.objects.create_intervention(name='Eat delicious food', intervention_type=InterventionManager.SYSTEM)
-#     Intervention.objects.create_intervention(name='Ride a bicycle', intervention_type=InterventionManager.SYSTEM)
-#     Intervention.objects.create_intervention(name='Go for a walk', intervention_type=InterventionManager.SYSTEM)
-#     Intervention.objects.create_intervention(name='Meet with friends', intervention_type=InterventionManager.SYSTEM)
-#     Intervention.objects.create_intervention(name='Play computer games', intervention_type=InterventionManager.SYSTEM)
-#     Intervention.objects.create_intervention(name='Watch a movie', intervention_type=InterventionManager.SYSTEM)
+if Intervention.objects.all().count() == 0:
+    Intervention.objects.create_intervention(name='Eat delicious food', intervention_type=InterventionManager.SYSTEM)
+    Intervention.objects.create_intervention(name='Ride a bicycle', intervention_type=InterventionManager.SYSTEM)
+    Intervention.objects.create_intervention(name='Go for a walk', intervention_type=InterventionManager.SYSTEM)
+    Intervention.objects.create_intervention(name='Meet with friends', intervention_type=InterventionManager.SYSTEM)
+    Intervention.objects.create_intervention(name='Play computer games', intervention_type=InterventionManager.SYSTEM)
+    Intervention.objects.create_intervention(name='Watch a movie', intervention_type=InterventionManager.SYSTEM)

@@ -219,7 +219,7 @@ def handle_peer_intervention_get(request):
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
-            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER, private_owner=None):
+            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER, privateUsername=None):
                 array.append(intervention.name)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
@@ -256,7 +256,7 @@ def handle_evaluation_submit(request):
             event.save()
             if json_body['sharedIntervention']:
                 interv = Intervention.objects.get(name=json_body['interventionName'])
-                interv.private_owner = None
+                interv.privateUsername = None
                 interv.save()
             return Res(data={'result': RES_SUCCESS})
         else:

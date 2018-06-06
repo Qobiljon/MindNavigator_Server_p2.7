@@ -79,7 +79,7 @@ class InterventionManager(models.Manager):
 class Intervention(models.Model):
     name = models.CharField(max_length=128, primary_key=True)
     interventionType = models.CharField(max_length=6)
-    private_username = models.CharField(max_length=32, null=True, default=None)
+    privateUsername = models.CharField(max_length=32, null=True, default=None)
     objects = InterventionManager()
 
 

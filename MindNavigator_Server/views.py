@@ -231,8 +231,10 @@ def handle_peer_intervention_get(request):
 @api_view(['POST'])
 def handle_evaluation_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'interventionName' in json_body and 'startTime' in json_body and 'endTime' in json_body \
-            and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body and 'sharedIntervention' in json_body:
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'interventionName' in json_body \
+            and 'startTime' in json_body and 'endTime' in json_body and 'realStressLevel' in json_body \
+            and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body \
+            and 'sharedIntervention' in json_body and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
                 and not Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists() \
                 and Intervention.objects.filter(name=json_body['interventionName']).exists():
@@ -242,10 +244,12 @@ def handle_evaluation_submit(request):
                 intervention_name=json_body['interventionName'],
                 start_time=json_body['startTime'],
                 end_time=json_body['endTime'],
+                real_stress_level=json_body['realStressLevel'],
                 event_done=json_body['eventDone'],
                 intervention_done=json_body['interventionDone'],
                 intervention_done_before=json_body['interventionDoneBefore'],
-                shared_intervention=json_body['sharedIntervention']
+                shared_intervention=json_body['sharedIntervention'],
+                interv_effectiveness=json_body['intervEffectiveness']
             ).save()
             event = Event.objects.get(eventId=json_body['eventId'])
             event.evaluated = True
@@ -264,13 +268,12 @@ def handle_evaluation_submit(request):
 @api_view(['POST'])
 def handle_feedback_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'stressIncrReason' in json_body and 'done' in json_body:
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'stressIncrReason' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             Feedback.objects.create_feedback(
                 user=User.objects.get(username=json_body['username']),
                 event_id=json_body['eventId'],
-                stress_incr_reason=json_body['stressIncrReason'],
-                done=json_body['done']
+                stress_incr_reason=json_body['stressIncrReason']
             ).save()
             return Res(data={'result': RES_SUCCESS})
         else:

@@ -84,17 +84,19 @@ class Intervention(models.Model):
 
 
 class EvaluationManager(models.Manager):
-    def create_evaluation(self, user, event_id, intervention_name, start_time, end_time, event_done, intervention_done, intervention_done_before, shared_intervention):
+    def create_evaluation(self, user, event_id, intervention_name, start_time, end_time, real_stress_level, event_done, intervention_done, intervention_done_before, shared_intervention, interv_effectiveness):
         return self.create(
             user=user,
             eventId=event_id,
             interventionName=intervention_name,
             startTime=start_time,
             endTime=end_time,
+            realStressLevel=real_stress_level,
             eventDone=event_done,
             interventionDone=intervention_done,
             interventionDoneBefore=intervention_done_before,
-            sharedIntervention=shared_intervention
+            sharedIntervention=shared_intervention,
+            intervEffectiveness=interv_effectiveness
         )
 
 
@@ -104,10 +106,12 @@ class Evaluation(models.Model):
     interventionName = models.CharField(max_length=128)
     startTime = models.BigIntegerField()
     endTime = models.BigIntegerField()
+    realStressLevel = models.PositiveSmallIntegerField()
     eventDone = models.BooleanField()
     interventionDone = models.BooleanField()
     interventionDoneBefore = models.BooleanField()
     sharedIntervention = models.BooleanField()
+    intervEffectiveness = models.PositiveSmallIntegerField()
     objects = EvaluationManager()
 
     def __json__(self):
@@ -126,12 +130,11 @@ class Evaluation(models.Model):
 
 
 class FeedbackManager(models.Manager):
-    def create_feedback(self, user, event_id, stress_incr_reason, done):
+    def create_feedback(self, user, event_id, stress_incr_reason):
         return self.create(
             user=user,
             eventId=event_id,
-            stressIncrReason=stress_incr_reason,
-            done=done
+            stressIncrReason=stress_incr_reason
         )
 
 
@@ -139,5 +142,4 @@ class Feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     eventId = models.BigIntegerField()
     stressIncrReason = models.CharField(max_length=128)
-    done = models.BooleanField()
     objects = FeedbackManager()

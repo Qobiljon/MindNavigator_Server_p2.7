@@ -110,6 +110,7 @@ def handle_event_edit(request):
     if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and Event.objects.all().filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
             event = Event.objects.get(eventId=json_body['event_id'])
+            event.delete()
             if 'stressLevel' in json_body:
                 event.stressLevel = json_body['stressLevel']
             if 'title' in json_body:

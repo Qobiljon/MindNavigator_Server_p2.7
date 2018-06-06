@@ -237,8 +237,7 @@ def handle_evaluation_submit(request):
             and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body \
             and 'sharedIntervention' in json_body and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
-                and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists() \
-                and Intervention.objects.filter(name=json_body['interventionName']).exists():
+                and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
             Evaluation.objects.create_evaluation(
                 user=User.objects.get(username=json_body['username']),
                 event=Event.objects.get(eventId=json_body['eventId']),

@@ -125,7 +125,6 @@ def handle_event_edit(request):
             if 'startTime' in json_body and 'endTime' in json_body and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime'], except_id=event.eventId):
                 event.startTime = json_body['startTime']
                 event.endTime = json_body['endTime']
-                print('NOT OVERLAPS AND TIME "CHANGED')
             if 'intervention' in json_body:
                 event.intervention = json_body['intervention']
             if 'interventionReminder' in json_body:

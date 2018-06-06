@@ -255,11 +255,14 @@ def handle_evaluation_submit(request):
 @api_view(['POST'])
 def handle_feedback_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'done' in json_body:
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'realStressLevel' in json_body \
+            and 'stressIncrReason' in json_body and 'done' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             Feedback.objects.create_feedback(
                 user=User.objects.get(username=json_body['username']),
                 event_id=json_body['eventId'],
+                real_stress_level=json_body['realStressLevel'],
+                stress_incr_reason=json_body['stressIncrReason'],
                 done=json_body['done']
             ).save()
             return Res(data={'result': RES_SUCCESS})

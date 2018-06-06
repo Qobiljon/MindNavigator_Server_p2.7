@@ -123,7 +123,7 @@ class Evaluation(models.Model):
             'startTime': self.startTime,
             'endTime': self.endTime,
             'realStressLevel': self.realStressLevel,
-            'eventDone': self.realStressLevel,
+            'eventDone': self.eventDone,
             'interventionDone': self.interventionDone,
             'interventionDoneBefore': self.interventionDoneBefore,
             'sharedIntervention': self.sharedIntervention,

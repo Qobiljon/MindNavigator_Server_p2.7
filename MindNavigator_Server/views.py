@@ -38,18 +38,18 @@ def time_add(_time, _add):
 
 def overlaps(user, start_time, end_time, except_id=None):
     if except_id is None:
-        if Event.objects.all().filter(owner=user, startTime__range=(start_time, end_time - 1)).exists():
+        if Event.objects.filter(owner=user, startTime__range=(start_time, end_time - 1)).exists():
             return True
-        elif Event.objects.all().filter(owner=user, endTime__range=(start_time + 1, end_time)).exists():
+        elif Event.objects.filter(owner=user, endTime__range=(start_time + 1, end_time)).exists():
             return True
-        elif Event.objects.all().filter(owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
+        elif Event.objects.filter(owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
             return True
     else:
-        if Event.objects.all().filter(~Q(eventId=except_id), owner=user, startTime__range=(start_time, end_time - 1)).exists():
+        if Event.objects.filter(~Q(eventId=except_id), owner=user, startTime__range=(start_time, end_time - 1)).exists():
             return True
-        elif Event.objects.all().filter(~Q(eventId=except_id), owner=user, endTime__range=(start_time + 1, end_time)).exists():
+        elif Event.objects.filter(~Q(eventId=except_id), owner=user, endTime__range=(start_time + 1, end_time)).exists():
             return True
-        elif Event.objects.all().filter(~Q(eventId=except_id), owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
+        elif Event.objects.filter(~Q(eventId=except_id), owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
             return True
 
 
@@ -89,7 +89,7 @@ def handle_event_create(request):
             and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body \
             and 'repeatMode' in json_body and 'eventReminder' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.all().filter(eventId=json_body['event_id']).exists() \
+        if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(eventId=json_body['event_id']).exists() \
                 and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime']):
             Event.objects.create_event(
                 event_id=json_body['event_id'],
@@ -116,7 +116,7 @@ def handle_event_create(request):
 def handle_event_edit(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.all().filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
+        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
             event = Event.objects.get(eventId=json_body['event_id'])
             if 'stressLevel' in json_body:
                 event.stressLevel = json_body['stressLevel']
@@ -149,7 +149,7 @@ def handle_event_edit(request):
 def handle_event_delete(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.all().filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
+        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
             Event.objects.get(eventId=json_body['event_id']).delete()
             return Res(data={'result': RES_SUCCESS})
         else:
@@ -169,13 +169,13 @@ def handle_events_fetch(request):
         done_ids = []
         array = []
 
-        for event in Event.objects.all().filter(owner=user, startTime__range=(_from, _till - 1)):
+        for event in Event.objects.filter(owner=user, startTime__range=(_from, _till - 1)):
             array.append(event.__json__())
             done_ids.append(event.eventId)
-        for event in Event.objects.all().filter(owner=user, endTime__range=(_from + 1, _till)):
+        for event in Event.objects.filter(owner=user, endTime__range=(_from + 1, _till)):
             if event.eventId not in done_ids:
                 array.append(event.__json__())
-        for event in Event.objects.all().filter(owner=user, startTime__lte=_from, endTime__gte=_till):
+        for event in Event.objects.filter(owner=user, startTime__lte=_from, endTime__gte=_till):
             if event.eventId not in done_ids:
                 array.append(event.__json__())
 
@@ -189,7 +189,7 @@ def handle_events_fetch(request):
 def handle_intervention_create(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'interventionName' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.all().filter(name=json_body['interventionName']).exists():
+        if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.filter(name=json_body['interventionName']).exists():
             Intervention.objects.create_intervention(name=json_body['interventionName'], intervention_type=InterventionManager.PEER).save()
             return Res(data={'result': RES_SUCCESS})
         else:
@@ -204,7 +204,7 @@ def handle_system_intervention_get(request):
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
-            for intervention in Intervention.objects.all().filter(interventionType=InterventionManager.SYSTEM):
+            for intervention in Intervention.objects.filter(interventionType=InterventionManager.SYSTEM):
                 array.append(intervention.name)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
@@ -219,7 +219,7 @@ def handle_peer_intervention_get(request):
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
-            for intervention in Intervention.objects.all().filter(interventionType=InterventionManager.PEER):
+            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER):
                 array.append(intervention.name)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
@@ -233,7 +233,7 @@ def handle_evaluation_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'interventionName' in json_body and 'startTime' in json_body and 'endTime' in json_body \
             and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body and 'recommend' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']):
+        if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
             Evaluation.objects.create_evaluation(
                 user=User.objects.get(username=json_body['username']),
                 event_id=json_body['eventId'],
@@ -245,6 +245,9 @@ def handle_evaluation_submit(request):
                 intervention_done_before=json_body['interventionDoneBefore'],
                 recommend=json_body['recommend']
             ).save()
+            event = Event.objects.get(eventId=json_body['eventId'])
+            event.evaluated = True
+            event.save()
             return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})
@@ -255,17 +258,28 @@ def handle_evaluation_submit(request):
 @api_view(['POST'])
 def handle_feedback_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'realStressLevel' in json_body \
-            and 'stressIncrReason' in json_body and 'done' in json_body:
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'stressIncrReason' in json_body and 'done' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             Feedback.objects.create_feedback(
                 user=User.objects.get(username=json_body['username']),
                 event_id=json_body['eventId'],
-                real_stress_level=json_body['realStressLevel'],
                 stress_incr_reason=json_body['stressIncrReason'],
                 done=json_body['done']
             ).save()
             return Res(data={'result': RES_SUCCESS})
+        else:
+            return Res(data={'result': RES_FAILURE})
+    else:
+        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})
+
+
+@api_view(['POST'])
+def handle_evaluation_fetch(request):
+    json_body = json.loads(request.body.decode('utf-8'))
+    if 'username' in json_body and 'eventId' in json_body:
+        cursor = Evaluation.objects.filter(user__username=json_body['username'], eventId=json_body['eventId'])
+        if cursor.exists():
+            return Res(data={'result': RES_SUCCESS, 'evaluation': Evaluation.objects.get(user__username=json_body['username'], eventId=json_body['eventId']).__json__()})
         else:
             return Res(data={'result': RES_FAILURE})
     else:

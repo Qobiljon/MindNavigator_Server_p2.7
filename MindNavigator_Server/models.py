@@ -48,6 +48,7 @@ class Event(models.Model):
     stressCause = models.CharField(max_length=128)
     repeatMode = models.SmallIntegerField()
     eventReminder = models.SmallIntegerField()
+    evaluated = models.BooleanField(default=False)
     objects = EventManager()
 
     def __json__(self):
@@ -62,7 +63,8 @@ class Event(models.Model):
             'stressType': self.stressType,
             'stressCause': self.stressCause,
             'repeatMode': self.repeatMode,
-            'eventReminder': self.eventReminder
+            'eventReminder': self.eventReminder,
+            'isEvaluated': self.evaluated
         }
 
 
@@ -107,13 +109,26 @@ class Evaluation(models.Model):
     recommend = models.BooleanField()
     objects = EvaluationManager()
 
+    def __json__(self):
+        return {
+            'userFullName': self.user.email,
+            'username': self.user.username,
+            'eventId': self.eventId,
+            'interventionName': self.interventionName,
+            'startTime': self.startTime,
+            'endTime': self.endTime,
+            'eventDone': self.eventDone,
+            'interventionDone': self.interventionDone,
+            'interventionDoneBefore': self.interventionDoneBefore,
+            'recommend': self.recommend
+        }
+
 
 class FeedbackManager(models.Manager):
     def create_feedback(self, user, event_id, real_stress_level, stress_incr_reason, done):
         return self.create(
             user=user,
             eventId=event_id,
-            realStressLevel=real_stress_level,
             stressIncrReason=stress_incr_reason,
             done=done
         )
@@ -122,7 +137,6 @@ class FeedbackManager(models.Manager):
 class Feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     eventId = models.BigIntegerField()
-    realStressLevel = models.IntegerField()
     stressIncrReason = models.CharField(max_length=128)
     done = models.BooleanField()
     objects = FeedbackManager()

@@ -79,7 +79,7 @@ class InterventionManager(models.Manager):
 class Intervention(models.Model):
     name = models.CharField(max_length=128, primary_key=True)
     interventionType = models.CharField(max_length=6)
-    private_username = models.CharField(max_length=32, default=None)
+    private_username = models.CharField(max_length=32, null=True, default=None)
     objects = InterventionManager()
 
 
@@ -121,12 +121,12 @@ class Evaluation(models.Model):
             'eventDone': self.eventDone,
             'interventionDone': self.interventionDone,
             'interventionDoneBefore': self.interventionDoneBefore,
-            'recommend': self.recommend
+            'recommend': self.sharedIntervention
         }
 
 
 class FeedbackManager(models.Manager):
-    def create_feedback(self, user, event_id, real_stress_level, stress_incr_reason, done):
+    def create_feedback(self, user, event_id, stress_incr_reason, done):
         return self.create(
             user=user,
             eventId=event_id,

@@ -190,7 +190,7 @@ def handle_intervention_create(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'interventionName' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.filter(name=json_body['interventionName']).exists():
-            Intervention.objects.create_intervention(name=json_body['interventionName'], intervention_type=InterventionManager.PEER).save()
+            Intervention.objects.create_intervention(name=json_body['interventionName'], intervention_type=InterventionManager.PEER, private_username=json_body['username']).save()
             return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})
@@ -219,7 +219,7 @@ def handle_peer_intervention_get(request):
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
-            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER):
+            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER, private_owner=None):
                 array.append(intervention.name)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
@@ -232,8 +232,10 @@ def handle_peer_intervention_get(request):
 def handle_evaluation_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'interventionName' in json_body and 'startTime' in json_body and 'endTime' in json_body \
-            and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body and 'recommend' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
+            and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body and 'sharedIntervention' in json_body:
+        if is_user_valid(json_body['username'], json_body['password']) \
+                and not Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists() \
+                and Intervention.objects.filter(name=json_body['interventionName']).exists():
             Evaluation.objects.create_evaluation(
                 user=User.objects.get(username=json_body['username']),
                 event_id=json_body['eventId'],
@@ -243,11 +245,15 @@ def handle_evaluation_submit(request):
                 event_done=json_body['eventDone'],
                 intervention_done=json_body['interventionDone'],
                 intervention_done_before=json_body['interventionDoneBefore'],
-                recommend=json_body['recommend']
+                shared_intervention=json_body['sharedIntervention']
             ).save()
             event = Event.objects.get(eventId=json_body['eventId'])
             event.evaluated = True
             event.save()
+            if json_body['sharedIntervention']:
+                interv = Intervention.objects.get(name=json_body['interventionName'])
+                interv.private_owner = None
+                interv.save()
             return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})

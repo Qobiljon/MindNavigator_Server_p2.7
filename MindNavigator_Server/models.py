@@ -72,18 +72,19 @@ class InterventionManager(models.Manager):
     PEER = 'peer'
     SYSTEM = 'system'
 
-    def create_intervention(self, name, intervention_type):
-        return self.create(name=name, interventionType=intervention_type)
+    def create_intervention(self, name, intervention_type, private_username=None):
+        return self.create(name=name, interventionType=intervention_type, private_username=private_username)
 
 
 class Intervention(models.Model):
     name = models.CharField(max_length=128, primary_key=True)
     interventionType = models.CharField(max_length=6)
+    private_username = models.CharField(max_length=32, default=None)
     objects = InterventionManager()
 
 
 class EvaluationManager(models.Manager):
-    def create_evaluation(self, user, event_id, intervention_name, start_time, end_time, event_done, intervention_done, intervention_done_before, recommend):
+    def create_evaluation(self, user, event_id, intervention_name, start_time, end_time, event_done, intervention_done, intervention_done_before, shared_intervention):
         return self.create(
             user=user,
             eventId=event_id,
@@ -93,7 +94,7 @@ class EvaluationManager(models.Manager):
             eventDone=event_done,
             interventionDone=intervention_done,
             interventionDoneBefore=intervention_done_before,
-            recommend=recommend
+            sharedIntervention=shared_intervention
         )
 
 
@@ -106,7 +107,7 @@ class Evaluation(models.Model):
     eventDone = models.BooleanField()
     interventionDone = models.BooleanField()
     interventionDoneBefore = models.BooleanField()
-    recommend = models.BooleanField()
+    sharedIntervention = models.BooleanField()
     objects = EvaluationManager()
 
     def __json__(self):

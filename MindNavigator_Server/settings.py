@@ -27,6 +27,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "165.246.43.97",
     "165.246.43.162",
+    u'qobiljon.pythonanywhere.com'
 ]
 
 # Application definition

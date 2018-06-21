@@ -89,16 +89,16 @@ def handle_login(request):
 @api_view(['POST'])
 def handle_event_create(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'event_id' in json_body and 'title' in json_body \
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'title' in json_body \
             and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body \
             and 'repeatMode' in json_body and 'eventReminder' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(
-                eventId=json_body['event_id']).exists() \
+                eventId=json_body['eventId']).exists() \
                 and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'],
                                  end_time=json_body['endTime']):
             Event.objects.create_event(
-                event_id=json_body['event_id'],
+                event_id=json_body['eventId'],
                 owner=User.objects.get(username=json_body['username']),
                 title=json_body['title'],
                 stress_level=json_body['stressLevel'],
@@ -267,8 +267,9 @@ def handle_evaluation_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'interventionName' in json_body \
             and 'startTime' in json_body and 'endTime' in json_body and 'realStressLevel' in json_body \
-            and 'eventDone' in json_body and 'interventionDone' in json_body and 'interventionDoneBefore' in json_body \
-            and 'sharedIntervention' in json_body and 'intervEffectiveness' in json_body:
+            and 'realStressCause' in json_body and 'journal' in json_body and 'eventDone' in json_body \
+            and 'interventionDone' in json_body and 'sharedIntervention' in json_body \
+            and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
                 and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
             if Evaluation.objects.get(event__owner__username=json_body['username'],
@@ -281,6 +282,8 @@ def handle_evaluation_submit(request):
                 start_time=json_body['startTime'],
                 end_time=json_body['endTime'],
                 real_stress_level=json_body['realStressLevel'],
+                real_stress_cause=json_body['realStressCause'],
+                journal=json_body['journal'],
                 event_done=json_body['eventDone'],
                 intervention_done=json_body['interventionDone'],
                 intervention_done_before=json_body['interventionDoneBefore'],

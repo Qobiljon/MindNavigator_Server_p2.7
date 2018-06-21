@@ -92,7 +92,7 @@ def handle_event_create(request):
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'title' in json_body \
             and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body \
-            and 'repeatMode' in json_body and 'eventReminder' in json_body:
+            and 'repeatId' in json_body and 'repeatMode' in json_body and 'eventReminder' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(
                 eventId=json_body['eventId']).exists() \
                 and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'],

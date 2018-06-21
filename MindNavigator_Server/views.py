@@ -173,8 +173,12 @@ def handle_event_delete(request):
                     owner__username=json_body['username'],
                     repeatId=json_body['repeatId']
             ).exists():
-                Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).delete()
-                return Res(data={'result': RES_SUCCESS})
+                cur = Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId'])
+                array = []
+                for event in cur:
+                    array.append(event.eventId)
+                cur.delete()
+                return Res(data={'result': RES_SUCCESS, 'deletedIds': array})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
@@ -273,7 +277,7 @@ def handle_evaluation_submit(request):
         if is_user_valid(json_body['username'], json_body['password']) \
                 and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
             if Evaluation.objects.filter(event__owner__username=json_body['username'],
-                                      event__eventId=json_body['eventId']).exists():
+                                         event__eventId=json_body['eventId']).exists():
                 Evaluation.objects.get(event__owner__username=json_body['username'],
                                        event__eventId=json_body['eventId']).delete()
             Evaluation.objects.create_evaluation(

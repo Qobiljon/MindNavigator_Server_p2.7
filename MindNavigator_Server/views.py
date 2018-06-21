@@ -271,12 +271,11 @@ def handle_evaluation_submit(request):
             and 'sharedIntervention' in json_body and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
                 and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
-            if Evaluation.objects.filter(user__username=json_body['username'],
-                                         event__eventId=json_body['eventId']).exists():
-                Evaluation.objects.get(user__username=json_body['username'],
+            if Evaluation.objects.get(event__owner__username=json_body['username'],
+                                      event__eventId=json_body['eventId']).exists():
+                Evaluation.objects.get(event__owner__username=json_body['username'],
                                        event__eventId=json_body['eventId']).delete()
             Evaluation.objects.create_evaluation(
-                user=User.objects.get(username=json_body['username']),
                 event=Event.objects.get(eventId=json_body['eventId']),
                 intervention_name=json_body['interventionName'],
                 start_time=json_body['startTime'],
@@ -308,10 +307,11 @@ def handle_evaluation_submit(request):
 def handle_evaluation_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'eventId' in json_body:
-        cursor = Evaluation.objects.filter(user__username=json_body['username'], event__eventId=json_body['eventId'])
+        cursor = Evaluation.objects.filter(event__owner__username=json_body['username'],
+                                           event__eventId=json_body['eventId'])
         if cursor.exists():
             return Res(data={'result': RES_SUCCESS,
-                             'evaluation': Evaluation.objects.get(user__username=json_body['username'],
+                             'evaluation': Evaluation.objects.get(event__owner__username=json_body['username'],
                                                                   event__eventId=json_body['eventId']).__json__()})
         else:
             return Res(data={'result': RES_FAILURE})

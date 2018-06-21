@@ -14,7 +14,8 @@ class User(models.Model):
 
 
 class EventManager(models.Manager):
-    def create_event(self, event_id, owner, title, stress_level, start_time, end_time, intervention, interv_reminder, stress_type, stress_cause, repeat_mode, event_reminder, repeat_id):
+    def create_event(self, event_id, owner, title, stress_level, start_time, end_time, intervention, interv_reminder,
+                     stress_type, stress_cause, repeat_mode, event_reminder, repeat_id):
         return self.create(
             eventId=event_id,
             owner=owner,
@@ -86,48 +87,51 @@ class Intervention(models.Model):
 
 
 class EvaluationManager(models.Manager):
-    def create_evaluation(self, user, event, intervention_name, start_time, end_time, real_stress_level, event_done, intervention_done, intervention_done_before, shared_intervention, interv_effectiveness):
+    def create_evaluation(self, event, intervention_name, start_time, end_time, real_stress_level,
+                          real_stress_cause, journal, event_done, intervention_done, shared_intervention,
+                          interv_effectiveness):
         return self.create(
-            user=user,
             event=event,
             interventionName=intervention_name,
             startTime=start_time,
             endTime=end_time,
             realStressLevel=real_stress_level,
+            realStressCause=real_stress_cause,
+            journal=journal,
             eventDone=event_done,
             interventionDone=intervention_done,
-            interventionDoneBefore=intervention_done_before,
             sharedIntervention=shared_intervention,
             intervEffectiveness=interv_effectiveness
         )
 
 
 class Evaluation(models.Model):
-    user = models.ForeignKey(to=User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     interventionName = models.CharField(max_length=128)
     startTime = models.BigIntegerField()
     endTime = models.BigIntegerField()
     realStressLevel = models.PositiveSmallIntegerField()
+    realStressCause = models.CharField(max_length=128, default='')
+    journal = models.CharField(max_length=128, default='')
     eventDone = models.BooleanField()
     interventionDone = models.BooleanField()
-    interventionDoneBefore = models.BooleanField()
     sharedIntervention = models.BooleanField()
     intervEffectiveness = models.PositiveSmallIntegerField()
     objects = EvaluationManager()
 
     def __json__(self):
         return {
-            'userFullName': self.user.email,
-            'username': self.user.username,
-            'eventId': self.event.eventId,
+            'userFullName': self.event.owner.email,
+            'username': self.event.owner.username,
+            'event': self.event.__json__(),
             'interventionName': self.interventionName,
             'startTime': self.startTime,
             'endTime': self.endTime,
             'realStressLevel': self.realStressLevel,
+            'realStressCause': self.realStressCause,
+            'journal': self.journal,
             'eventDone': self.eventDone,
             'interventionDone': self.interventionDone,
-            'interventionDoneBefore': self.interventionDoneBefore,
             'sharedIntervention': self.sharedIntervention,
             'intervEffectiveness': self.intervEffectiveness
         }

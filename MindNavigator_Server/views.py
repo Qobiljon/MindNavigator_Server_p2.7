@@ -109,8 +109,8 @@ def handle_event_create(request):
                 stress_type=json_body['stressType'],
                 stress_cause=json_body['stressCause'],
                 repeat_mode=json_body['repeatMode'],
-                event_reminder=json_body['eventReminder'],
-                repeat_id=json_body['repeatId']
+                repeat_id=json_body['repeatId'],
+                event_reminder=json_body['eventReminder']
             ).save()
             return Res(data={'result': RES_SUCCESS})
         else:

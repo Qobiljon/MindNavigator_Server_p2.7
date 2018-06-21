@@ -49,9 +49,9 @@ class Event(models.Model):
     stressType = models.CharField(max_length=32)
     stressCause = models.CharField(max_length=128)
     repeatMode = models.SmallIntegerField()
+    repeatId = models.BigIntegerField(default=0)
     eventReminder = models.SmallIntegerField()
     evaluated = models.BooleanField(default=False)
-    repeatId = models.BigIntegerField(default=0)
     objects = EventManager()
 
     def __json__(self):
@@ -66,6 +66,7 @@ class Event(models.Model):
             'stressType': self.stressType,
             'stressCause': self.stressCause,
             'repeatMode': self.repeatMode,
+            'repeatId': self.repeatId,
             'eventReminder': self.eventReminder,
             'isEvaluated': self.evaluated
         }

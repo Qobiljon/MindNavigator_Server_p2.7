@@ -32,7 +32,6 @@ urlpatterns = [
     url('interv_syst$', views.handle_system_intervention_get),
     url('interv_peer$', views.handle_peer_intervention_get),
     url('eval_subm$', views.handle_evaluation_submit),
-    url('feedb_subm$', views.handle_feedback_submit),
     url('eval_fetch$', views.handle_evaluation_fetch),
 ]
 

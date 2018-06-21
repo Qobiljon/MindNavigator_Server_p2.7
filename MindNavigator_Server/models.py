@@ -14,7 +14,7 @@ class User(models.Model):
 
 
 class EventManager(models.Manager):
-    def create_event(self, event_id, owner, title, stress_level, start_time, end_time, intervention, interv_reminder, stress_type, stress_cause, repeat_mode, event_reminder):
+    def create_event(self, event_id, owner, title, stress_level, start_time, end_time, intervention, interv_reminder, stress_type, stress_cause, repeat_mode, event_reminder, repeat_id):
         return self.create(
             eventId=event_id,
             owner=owner,
@@ -27,7 +27,8 @@ class EventManager(models.Manager):
             stressType=stress_type,
             stressCause=stress_cause,
             repeatMode=repeat_mode,
-            eventReminder=event_reminder
+            eventReminder=event_reminder,
+            repeatId=repeat_id
         )
 
 
@@ -49,6 +50,7 @@ class Event(models.Model):
     repeatMode = models.SmallIntegerField()
     eventReminder = models.SmallIntegerField()
     evaluated = models.BooleanField(default=False)
+    repeatId = models.BigIntegerField(default=0)
     objects = EventManager()
 
     def __json__(self):
@@ -129,19 +131,3 @@ class Evaluation(models.Model):
             'sharedIntervention': self.sharedIntervention,
             'intervEffectiveness': self.intervEffectiveness
         }
-
-
-class FeedbackManager(models.Manager):
-    def create_feedback(self, user, event_id, stress_incr_reason):
-        return self.create(
-            user=user,
-            eventId=event_id,
-            stressIncrReason=stress_incr_reason
-        )
-
-
-class Feedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    eventId = models.BigIntegerField()
-    stressIncrReason = models.CharField(max_length=128)
-    objects = FeedbackManager()

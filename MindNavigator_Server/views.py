@@ -3,7 +3,7 @@ import datetime
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response as Res
-from MindNavigator_Server.models import User, Event, Intervention, InterventionManager, Evaluation, Feedback
+from MindNavigator_Server.models import User, Event, Intervention, InterventionManager, Evaluation
 from django.db.models import Q
 
 # region Constants
@@ -45,11 +45,14 @@ def overlaps(user, start_time, end_time, except_id=None):
         elif Event.objects.filter(owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
             return True
     else:
-        if Event.objects.filter(~Q(eventId=except_id), owner=user, startTime__range=(start_time, end_time - 1)).exists():
+        if Event.objects.filter(~Q(eventId=except_id), owner=user,
+                                startTime__range=(start_time, end_time - 1)).exists():
             return True
-        elif Event.objects.filter(~Q(eventId=except_id), owner=user, endTime__range=(start_time + 1, end_time)).exists():
+        elif Event.objects.filter(~Q(eventId=except_id), owner=user,
+                                  endTime__range=(start_time + 1, end_time)).exists():
             return True
-        elif Event.objects.filter(~Q(eventId=except_id), owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
+        elif Event.objects.filter(~Q(eventId=except_id), owner=user, startTime__lte=start_time,
+                                  endTime__gte=end_time).exists():
             return True
 
 
@@ -68,7 +71,8 @@ def handle_register(request):
             User.objects.create_user(username=username, password=password, name=name)
             return Res(data={'result': RES_SUCCESS})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'either of username, password, or name was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST,
+                         'reason': 'either of username, password, or name was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
@@ -89,8 +93,10 @@ def handle_event_create(request):
             and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body \
             and 'repeatMode' in json_body and 'eventReminder' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(eventId=json_body['event_id']).exists() \
-                and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime']):
+        if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(
+                eventId=json_body['event_id']).exists() \
+                and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'],
+                                 end_time=json_body['endTime']):
             Event.objects.create_event(
                 event_id=json_body['event_id'],
                 owner=User.objects.get(username=json_body['username']),
@@ -103,7 +109,8 @@ def handle_event_create(request):
                 stress_type=json_body['stressType'],
                 stress_cause=json_body['stressCause'],
                 repeat_mode=json_body['repeatMode'],
-                event_reminder=json_body['eventReminder']
+                event_reminder=json_body['eventReminder'],
+                repeat_id=json_body['repeatId']
             ).save()
             return Res(data={'result': RES_SUCCESS})
         else:
@@ -116,13 +123,16 @@ def handle_event_create(request):
 def handle_event_edit(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
+        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(
+                owner__username=json_body['username'], eventId=json_body['event_id']).exists():
             event = Event.objects.get(eventId=json_body['event_id'])
             if 'stressLevel' in json_body:
                 event.stressLevel = json_body['stressLevel']
             if 'title' in json_body:
                 event.title = json_body['title']
-            if 'startTime' in json_body and 'endTime' in json_body and not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime'], except_id=event.eventId):
+            if 'startTime' in json_body and 'endTime' in json_body and not overlaps(
+                    User.objects.get(username=json_body['username']), start_time=json_body['startTime'],
+                    end_time=json_body['endTime'], except_id=event.eventId):
                 event.startTime = json_body['startTime']
                 event.endTime = json_body['endTime']
             if 'intervention' in json_body:
@@ -137,31 +147,46 @@ def handle_event_edit(request):
                 event.repeatMode = json_body['repeatMode']
             if 'eventReminder' in json_body:
                 event.eventReminder = json_body['eventReminder']
+            if 'repeatId' in json_body:
+                event.repeatId = json_body['repeatId']
             event.save()
             return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST,
+                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
 def handle_event_delete(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['event_id']).exists():
-            Event.objects.get(eventId=json_body['event_id']).delete()
-            return Res(data={'result': RES_SUCCESS})
+    if 'username' in json_body and 'password' in json_body and ('eventId' in json_body or 'repeatId' in json_body):
+        if is_user_valid(json_body['username'], json_body['password']):
+            if 'eventId' in json_body and Event.objects.filter(
+                    owner__username=json_body['username'],
+                    eventId=json_body['eventId']
+            ).exists():
+                Event.objects.get(eventId=json_body['eventId']).delete()
+                return Res(data={'result': RES_SUCCESS})
+            elif 'repeatId' in json_body and Event.objects.filter(
+                    owner__username=json_body['username'],
+                    repeatId=json_body['repeatId']
+            ).exists():
+                Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).delete()
+                return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST,
+                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
 def handle_events_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and is_user_valid(json_body['username'], json_body['password']):
+    if 'username' in json_body and 'password' in json_body and is_user_valid(json_body['username'],
+                                                                             json_body['password']):
         user = User.objects.get(username=json_body['username'])
         _from = json_body['period_from']
         _till = json_body['period_till']
@@ -190,14 +215,18 @@ def handle_events_fetch(request):
 def handle_intervention_create(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'interventionName' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.filter(name=json_body['interventionName']).exists():
+        if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.filter(
+                name=json_body['interventionName']).exists():
             if not Intervention.objects.filter(name=json_body['interventionName'], privateUsername=None).exists():
-                Intervention.objects.create_intervention(name=json_body['interventionName'], intervention_type=InterventionManager.PEER, private_username=json_body['username']).save()
+                Intervention.objects.create_intervention(name=json_body['interventionName'],
+                                                         intervention_type=InterventionManager.PEER,
+                                                         private_username=json_body['username']).save()
             return Res(data={'result': RES_SUCCESS})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST,
+                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
@@ -212,7 +241,8 @@ def handle_system_intervention_get(request):
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST,
+                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
@@ -221,13 +251,15 @@ def handle_peer_intervention_get(request):
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
-            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER, privateUsername=None):
+            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER,
+                                                            privateUsername=None):
                 array.append(intervention.name)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST,
+                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
@@ -239,8 +271,10 @@ def handle_evaluation_submit(request):
             and 'sharedIntervention' in json_body and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
                 and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
-            if Evaluation.objects.filter(user__username=json_body['username'], event__eventId=json_body['eventId']).exists():
-                Evaluation.objects.get(user__username=json_body['username'], event__eventId=json_body['eventId']).delete()
+            if Evaluation.objects.filter(user__username=json_body['username'],
+                                         event__eventId=json_body['eventId']).exists():
+                Evaluation.objects.get(user__username=json_body['username'],
+                                       event__eventId=json_body['eventId']).delete()
             Evaluation.objects.create_evaluation(
                 user=User.objects.get(username=json_body['username']),
                 event=Event.objects.get(eventId=json_body['eventId']),
@@ -257,7 +291,8 @@ def handle_evaluation_submit(request):
             event = Event.objects.get(eventId=json_body['eventId'])
             event.evaluated = True
             event.save()
-            if json_body['sharedIntervention'] and not Intervention.objects.filter(name=json_body['interventionName'], privateUsername=None).exists():
+            if json_body['sharedIntervention'] and not Intervention.objects.filter(name=json_body['interventionName'],
+                                                                                   privateUsername=None).exists():
                 interv = Intervention.objects.get(name=json_body['interventionName'])
                 interv.privateUsername = None
                 interv.save()
@@ -265,24 +300,8 @@ def handle_evaluation_submit(request):
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})
-
-
-@api_view(['POST'])
-def handle_feedback_submit(request):
-    json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'stressIncrReason' in json_body:
-        if is_user_valid(json_body['username'], json_body['password']):
-            Feedback.objects.create_feedback(
-                user=User.objects.get(username=json_body['username']),
-                event_id=json_body['eventId'],
-                stress_incr_reason=json_body['stressIncrReason']
-            ).save()
-            return Res(data={'result': RES_SUCCESS})
-        else:
-            return Res(data={'result': RES_FAILURE})
-    else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})
+        return Res(
+            data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})
 
 
 @api_view(['POST'])
@@ -291,8 +310,11 @@ def handle_evaluation_fetch(request):
     if 'username' in json_body and 'eventId' in json_body:
         cursor = Evaluation.objects.filter(user__username=json_body['username'], event__eventId=json_body['eventId'])
         if cursor.exists():
-            return Res(data={'result': RES_SUCCESS, 'evaluation': Evaluation.objects.get(user__username=json_body['username'], event__eventId=json_body['eventId']).__json__()})
+            return Res(data={'result': RES_SUCCESS,
+                             'evaluation': Evaluation.objects.get(user__username=json_body['username'],
+                                                                  event__eventId=json_body['eventId']).__json__()})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})
+        return Res(
+            data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})

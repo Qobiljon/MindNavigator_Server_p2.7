@@ -174,7 +174,7 @@ def handle_event_create(request):
                     json_body['endTime'] if json_body['sun'] else None
                 ]
 
-                if end[0] - start[0] > 604800000:
+                if json_body['endTime'] - json_body['startTime'] > 604800000:
                     return Res(data={'result': RES_FAILURE, 'reason': 'event length is longer than a week'})
 
                 event_id = json_body['eventId']

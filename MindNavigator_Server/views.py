@@ -165,13 +165,15 @@ def handle_event_delete(request):
             if 'eventId' in json_body and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['eventId']).exists():
                 Event.objects.get(eventId=json_body['eventId']).delete()
                 return Res(data={'result': RES_SUCCESS})
-            elif 'repeatId' in json_body and Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).exists():
-                del_events = Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId'])
+            elif 'repeatId' in json_body:
                 array = []
-                for event in del_events:
+                for event in Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']):
                     array.append(event.eventId)
-                del_events.delete()
-                return Res(data={'result': RES_SUCCESS, 'deletedIds': array})
+                    event.delete()
+                all_events = []
+                for event in Event.objects.filter(owner__username=json_body['username']):
+                    all_events.append(event.__json__())
+                return Res(data={'result': RES_SUCCESS, 'deletedIds': array, 'allEvents': all_events})
         return Res(data={'result': RES_FAILURE, 'rep_id_isso': 'repeatId' in json_body, 'rep_ids_found': Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).exists()})
     else:
         return Res(data={'result': RES_BAD_REQUEST,

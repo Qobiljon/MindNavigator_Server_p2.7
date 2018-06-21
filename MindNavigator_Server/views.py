@@ -170,11 +170,11 @@ def handle_event_delete(request):
                 for event in Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']):
                     array.append(event.eventId)
                     event.delete()
-                all_events = []
-                for event in Event.objects.filter(owner__username=json_body['username']):
-                    all_events.append(event.__json__())
-                return Res(data={'result': RES_SUCCESS, 'deletedIds': array, 'allEvents': all_events})
-        return Res(data={'result': RES_FAILURE, 'rep_id_isso': 'repeatId' in json_body, 'rep_ids_found': Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).exists()})
+                return Res(data={'result': RES_SUCCESS, 'deletedIds': array})
+        all_events = []
+        for event in Event.objects.filter(owner__username=json_body['username']):
+            all_events.append(event.__json__())
+        return Res(data={'result': RES_FAILURE, 'repeatId': json_body['repeatId'], 'allEvents': all_events})
     else:
         return Res(data={'result': RES_BAD_REQUEST,
                          'reason': 'Username, password, or event_id was not passed as a POST argument!'})

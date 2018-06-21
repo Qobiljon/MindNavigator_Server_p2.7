@@ -272,7 +272,7 @@ def handle_evaluation_submit(request):
             and 'intervEffectiveness' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) \
                 and Event.objects.filter(eventId=json_body['eventId'], owner__username=json_body['username']).exists():
-            if Evaluation.objects.get(event__owner__username=json_body['username'],
+            if Evaluation.objects.filter(event__owner__username=json_body['username'],
                                       event__eventId=json_body['eventId']).exists():
                 Evaluation.objects.get(event__owner__username=json_body['username'],
                                        event__eventId=json_body['eventId']).delete()
@@ -286,7 +286,6 @@ def handle_evaluation_submit(request):
                 journal=json_body['journal'],
                 event_done=json_body['eventDone'],
                 intervention_done=json_body['interventionDone'],
-                intervention_done_before=json_body['interventionDoneBefore'],
                 shared_intervention=json_body['sharedIntervention'],
                 interv_effectiveness=json_body['intervEffectiveness']
             ).save()

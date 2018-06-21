@@ -172,7 +172,7 @@ def handle_event_delete(request):
                     array.append(event.eventId)
                 del_events.delete()
                 return Res(data={'result': RES_SUCCESS, 'deletedIds': array})
-        return Res(data={'result': RES_FAILURE})
+        return Res(data={'result': RES_FAILURE, 'rep_id_isso': 'repeatId' in json_body, 'rep_ids_found': Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).exists()})
     else:
         return Res(data={'result': RES_BAD_REQUEST,
                          'reason': 'Username, password, or event_id was not passed as a POST argument!'})

@@ -89,8 +89,7 @@ def handle_login(request):
 @api_view(['POST'])
 def handle_event_create(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'title' in json_body \
-            and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'title' in json_body and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body \
             and 'repeatId' in json_body and 'repeatMode' in json_body and 'eventReminder' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(
@@ -163,24 +162,17 @@ def handle_event_delete(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and ('eventId' in json_body or 'repeatId' in json_body):
         if is_user_valid(json_body['username'], json_body['password']):
-            if 'eventId' in json_body and Event.objects.filter(
-                    owner__username=json_body['username'],
-                    eventId=json_body['eventId']
-            ).exists():
+            if 'eventId' in json_body and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['eventId']).exists():
                 Event.objects.get(eventId=json_body['eventId']).delete()
                 return Res(data={'result': RES_SUCCESS})
-            elif 'repeatId' in json_body and Event.objects.filter(
-                    owner__username=json_body['username'],
-                    repeatId=json_body['repeatId']
-            ).exists():
+            elif 'repeatId' in json_body and Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId']).exists():
                 del_events = Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId'])
                 array = []
                 for event in del_events:
                     array.append(event.eventId)
                 del_events.delete()
                 return Res(data={'result': RES_SUCCESS, 'deletedIds': array})
-        else:
-            return Res(data={'result': RES_FAILURE})
+        return Res(data={'result': RES_FAILURE})
     else:
         return Res(data={'result': RES_BAD_REQUEST,
                          'reason': 'Username, password, or event_id was not passed as a POST argument!'})

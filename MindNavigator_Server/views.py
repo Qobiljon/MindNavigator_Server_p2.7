@@ -173,11 +173,11 @@ def handle_event_delete(request):
                     owner__username=json_body['username'],
                     repeatId=json_body['repeatId']
             ).exists():
-                cur = Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId'])
+                del_events = Event.objects.filter(owner__username=json_body['username'], repeatId=json_body['repeatId'])
                 array = []
-                for event in cur:
+                for event in del_events:
                     array.append(event.eventId)
-                cur.delete()
+                del_events.delete()
                 return Res(data={'result': RES_SUCCESS, 'deletedIds': array})
         else:
             return Res(data={'result': RES_FAILURE})

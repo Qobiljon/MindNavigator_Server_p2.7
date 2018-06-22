@@ -1,4 +1,4 @@
-import json
+import json, time
 import calendar as cal
 import datetime as dt
 from rest_framework.decorators import api_view
@@ -62,7 +62,7 @@ def weekday(millis):
 
 
 def add_timedelta(millis, timedelta):
-    return int(round((dt.datetime.fromtimestamp(millis / 1000.0) + timedelta).timestamp() * 1000))
+    return int(round(time.mktime((dt.datetime.fromtimestamp(millis / 1000.0) + timedelta).timetuple()) * 1000))
 
 
 @api_view(['POST'])

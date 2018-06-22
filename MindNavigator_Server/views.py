@@ -62,8 +62,8 @@ def weekday(millis):
 
 
 def add_timedelta(millis, timedelta):
-    time = dt.datetime.fromtimestamp(millis / 1000.0) + timedelta
-    return int(round(time.mktime(time.timetuple()) * 1000))
+    res = dt.datetime.fromtimestamp(millis / 1000.0) + timedelta
+    return int(round(time.mktime(res.timetuple()) * 1000))
 
 
 @api_view(['POST'])

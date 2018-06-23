@@ -217,7 +217,7 @@ def handle_event_create(request):
 @api_view(['POST'])
 def handle_event_edit(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and 'password' in json_body and 'event_id' in json_body:
+    if 'username' in json_body and 'password' in json_body and 'eventId' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(
                 owner__username=json_body['username'], eventId=json_body['event_id']).exists():
             event = Event.objects.get(eventId=json_body['event_id'])

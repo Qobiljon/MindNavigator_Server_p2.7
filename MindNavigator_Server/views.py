@@ -219,8 +219,8 @@ def handle_event_edit(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(
-                owner__username=json_body['username'], eventId=json_body['event_id']).exists():
-            event = Event.objects.get(eventId=json_body['event_id'])
+                owner__username=json_body['username'], eventId=json_body['eventId']).exists():
+            event = Event.objects.get(eventId=json_body['eventId'])
             if 'stressLevel' in json_body:
                 event.stressLevel = json_body['stressLevel']
             if 'title' in json_body:
@@ -250,7 +250,7 @@ def handle_event_edit(request):
             return Res(data={'result': RES_FAILURE})
     else:
         return Res(data={'result': RES_BAD_REQUEST,
-                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+                         'reason': 'Username, password, or eventId was not passed as a POST argument!'})
 
 
 @api_view(['POST'])

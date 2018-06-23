@@ -68,7 +68,7 @@ def add_timedelta(millis, timedelta):
 
 @api_view(['POST'])
 def handle_register(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
 
     if 'username' in json_body and 'password' in json_body and 'name' in json_body:
         username = json_body['username']
@@ -87,7 +87,7 @@ def handle_register(request):
 
 @api_view(['POST'])
 def handle_login(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             return Res(data={'result': RES_SUCCESS})
@@ -98,7 +98,7 @@ def handle_login(request):
 
 @api_view(['POST'])
 def handle_event_create(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'title' in json_body and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body and 'repeatId' in json_body and 'repeatTill' in json_body and 'repeatMode' in json_body and 'eventReminder' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(eventId=json_body['eventId']).exists():
@@ -216,7 +216,7 @@ def handle_event_create(request):
 
 @api_view(['POST'])
 def handle_event_edit(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and Event.objects.filter(
                 owner__username=json_body['username'], eventId=json_body['eventId']).exists():
@@ -255,7 +255,7 @@ def handle_event_edit(request):
 
 @api_view(['POST'])
 def handle_event_delete(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and ('eventId' in json_body or 'repeatId' in json_body):
         if is_user_valid(json_body['username'], json_body['password']):
             if 'eventId' in json_body and Event.objects.filter(owner__username=json_body['username'], eventId=json_body['eventId']).exists():
@@ -278,7 +278,7 @@ def handle_event_delete(request):
 
 @api_view(['POST'])
 def handle_events_fetch(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and is_user_valid(json_body['username'],
                                                                              json_body['password']):
         user = User.objects.get(username=json_body['username'])
@@ -307,7 +307,7 @@ def handle_events_fetch(request):
 
 @api_view(['POST'])
 def handle_intervention_create(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'interventionName' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Intervention.objects.filter(
                 name=json_body['interventionName']).exists():
@@ -325,7 +325,7 @@ def handle_intervention_create(request):
 
 @api_view(['POST'])
 def handle_system_intervention_get(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
@@ -341,7 +341,7 @@ def handle_system_intervention_get(request):
 
 @api_view(['POST'])
 def handle_peer_intervention_get(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
@@ -358,7 +358,7 @@ def handle_peer_intervention_get(request):
 
 @api_view(['POST'])
 def handle_evaluation_submit(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'interventionName' in json_body \
             and 'startTime' in json_body and 'endTime' in json_body and 'realStressLevel' in json_body \
             and 'realStressCause' in json_body and 'journal' in json_body and 'eventDone' in json_body \
@@ -401,7 +401,7 @@ def handle_evaluation_submit(request):
 
 @api_view(['POST'])
 def handle_evaluation_fetch(request):
-    json_body = json.loads(unicode(request.body, errors='ignore'))
+    json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'eventId' in json_body:
         cursor = Evaluation.objects.filter(event__owner__username=json_body['username'],
                                            event__eventId=json_body['eventId'])

@@ -36,7 +36,6 @@ urlpatterns = [
     url('eval_fetch$', views.handle_evaluation_fetch),
 ]
 
-Intervention.objects.all().delete()
 if Intervention.objects.all().count() == 0:
     Intervention.objects.create_intervention(name="밖에 나가기", intervention_type=InterventionManager.SYSTEM)
     Intervention.objects.create_intervention(name="쇼핑 또는 물건 사기", intervention_type=InterventionManager.SYSTEM)

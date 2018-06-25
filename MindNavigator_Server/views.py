@@ -373,6 +373,7 @@ def handle_evaluation_submit(request):
                                        event__eventId=json_body['eventId']).delete()
             event = Event.objects.get(eventId=json_body['eventId'])
             event.realStressLevel = json_body['realStressLevel']
+            event.save()
 
             Evaluation.objects.create_evaluation(
                 event=event,

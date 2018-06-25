@@ -15,7 +15,7 @@ class User(models.Model):
 
 class EventManager(models.Manager):
     def create_event(self, event_id, owner, title, stress_level, start_time, end_time, intervention, interv_reminder,
-                     stress_type, stress_cause, repeat_mode, event_reminder, repeat_id):
+                     stress_type, stress_cause, repeat_mode, event_reminder, repeat_id, repeat_till):
         return self.create(
             eventId=event_id,
             owner=owner,
@@ -29,7 +29,8 @@ class EventManager(models.Manager):
             stressCause=stress_cause,
             repeatMode=repeat_mode,
             eventReminder=event_reminder,
-            repeatId=repeat_id
+            repeatId=repeat_id,
+            repeatTill=repeat_till
         )
 
 
@@ -52,6 +53,7 @@ class Event(models.Model):
     repeatId = models.BigIntegerField(default=0)
     eventReminder = models.SmallIntegerField()
     evaluated = models.BooleanField(default=False)
+    repeatTill = models.BigIntegerField(default=0)
     objects = EventManager()
 
     def __json__(self):
@@ -68,7 +70,8 @@ class Event(models.Model):
             'repeatMode': self.repeatMode,
             'repeatId': self.repeatId,
             'eventReminder': self.eventReminder,
-            'isEvaluated': self.evaluated
+            'isEvaluated': self.evaluated,
+            'repeatTill': self.repeatTill
         }
 
 

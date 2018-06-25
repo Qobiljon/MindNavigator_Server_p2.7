@@ -1,4 +1,5 @@
-import json, time
+import json
+import time
 import calendar as cal
 import datetime as dt
 from rest_framework.decorators import api_view
@@ -23,17 +24,17 @@ def is_user_valid(username, password):
 
 
 def time_add(_time, _add):
-    time = dt.datetime(
+    res = dt.datetime(
         year=int(_time / 1000000),
         month=int(_time / 10000) % 100,
         day=int(_time / 100) % 100,
         hour=int(_time % 100)
     )
     if _add >= 0:
-        time += dt.timedelta(hours=int(_add / 60))
+        res += dt.timedelta(hours=int(_add / 60))
     else:
-        time -= dt.timedelta(hours=int(-_add / 60))
-    return int("%02d%02d%02d%02d" % (time.year % 100, time.month, time.day, time.hour))
+        res -= dt.timedelta(hours=int(-_add / 60))
+    return int("%02d%02d%02d%02d" % (res.year % 100, res.month, res.day, res.hour))
 
 
 def overlaps(user, start_time, end_time, except_id=None):
@@ -147,7 +148,8 @@ def handle_event_create(request):
                             stress_cause=json_body['stressCause'],
                             repeat_mode=json_body['repeatMode'],
                             repeat_id=json_body['repeatId'],
-                            event_reminder=json_body['eventReminder']
+                            event_reminder=json_body['eventReminder'],
+                            repeat_till=json_body['repeatTill']
                         ).save()
                     start_time += 86400000
                     end_time += 86400000

@@ -37,23 +37,20 @@ def time_add(_time, _add):
     return int("%02d%02d%02d%02d" % (res.year % 100, res.month, res.day, res.hour))
 
 
-def overlaps(user, start_time, end_time, except_id=None):
+def overlaps(username, start_time, end_time, except_id=None):
     if except_id is None:
-        if Event.objects.filter(owner=user, startTime__range=(start_time, end_time - 1)).exists():
+        if Event.objects.filter(owner__username=username, startTime__range=(start_time, end_time - 1)).exists():
             return True
-        elif Event.objects.filter(owner=user, endTime__range=(start_time + 1, end_time)).exists():
+        elif Event.objects.filter(owner__username=username, endTime__range=(start_time + 1, end_time)).exists():
             return True
-        elif Event.objects.filter(owner=user, startTime__lte=start_time, endTime__gte=end_time).exists():
+        elif Event.objects.filter(owner__username=username, startTime__lte=start_time, endTime__gte=end_time).exists():
             return True
     else:
-        if Event.objects.filter(~Q(eventId=except_id), owner=user,
-                                startTime__range=(start_time, end_time - 1)).exists():
+        if Event.objects.filter(~Q(eventId=except_id), owner__username=username, startTime__range=(start_time, end_time - 1)).exists():
             return True
-        elif Event.objects.filter(~Q(eventId=except_id), owner=user,
-                                  endTime__range=(start_time + 1, end_time)).exists():
+        elif Event.objects.filter(~Q(eventId=except_id), owner__username=username, endTime__range=(start_time + 1, end_time)).exists():
             return True
-        elif Event.objects.filter(~Q(eventId=except_id), owner=user, startTime__lte=start_time,
-                                  endTime__gte=end_time).exists():
+        elif Event.objects.filter(~Q(eventId=except_id), owner__username=username, startTime__lte=start_time, endTime__gte=end_time).exists():
             return True
 
 
@@ -103,9 +100,8 @@ def handle_event_create(request):
     if 'username' in json_body and 'password' in json_body and 'eventId' in json_body and 'title' in json_body and 'stressLevel' in json_body and 'startTime' in json_body and 'endTime' in json_body and 'intervention' in json_body \
             and 'interventionReminder' in json_body and 'stressType' in json_body and 'stressCause' in json_body and 'repeatId' in json_body and 'repeatTill' in json_body and 'repeatMode' in json_body and 'eventReminder' in json_body:
         if is_user_valid(json_body['username'], json_body['password']) and not Event.objects.filter(eventId=json_body['eventId']).exists():
-            user = User.objects.get(username=json_body['username'])
             if json_body['repeatMode'] is Event.NO_REPEAT:
-                if not overlaps(User.objects.get(username=json_body['username']), start_time=json_body['startTime'], end_time=json_body['endTime']):
+                if not overlaps(username=json_body['username'], start_time=json_body['startTime'], end_time=json_body['endTime']):
                     # create a single event
                     Event.objects.create_event(
                         event_id=json_body['eventId'],
@@ -134,7 +130,7 @@ def handle_event_create(request):
                     return Res(data={'result': RES_FAILURE, 'reason': 'event length is longer than a day'})
 
                 while start_time < json_body['repeatTill']:
-                    if not overlaps(user=user, start_time=start_time, end_time=end_time):
+                    if not overlaps(username=json_body['username'], start_time=start_time, end_time=end_time):
                         Event.objects.create_event(
                             event_id=event_id,
                             owner=User.objects.get(username=json_body['username']),
@@ -189,7 +185,7 @@ def handle_event_create(request):
                     end[x] = add_timedelta(end[x], dt.timedelta(days=day_delta))
 
                     while start[x] < json_body['repeatTill']:
-                        if not overlaps(user=user, start_time=start[x], end_time=end[x]):
+                        if not overlaps(username=json_body['username'], start_time=start[x], end_time=end[x]):
                             Event.objects.create_event(
                                 event_id=event_id,
                                 owner=User.objects.get(username=json_body['username']),
@@ -228,7 +224,7 @@ def handle_event_edit(request):
             if 'title' in json_body:
                 event.title = json_body['title']
             if 'startTime' in json_body and 'endTime' in json_body and not overlaps(
-                    User.objects.get(username=json_body['username']), start_time=json_body['startTime'],
+                    username=json_body['username'], start_time=json_body['startTime'],
                     end_time=json_body['endTime'], except_id=event.eventId):
                 event.startTime = json_body['startTime']
                 event.endTime = json_body['endTime']

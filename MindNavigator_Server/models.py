@@ -15,7 +15,7 @@ class User(models.Model):
 
 class EventManager(models.Manager):
     def create_event(self, event_id, owner, title, stress_level, start_time, end_time, intervention, interv_reminder,
-                     stress_type, stress_cause, repeat_mode, event_reminder, repeat_id, repeat_till):
+                     stress_type, stress_cause, repeat_mode, event_reminder, repeat_id, repeat_till=0):
         return self.create(
             eventId=event_id,
             owner=owner,
@@ -43,6 +43,7 @@ class Event(models.Model):
     owner = models.ForeignKey(to=User, on_delete=models.CASCADE)
     title = models.CharField(max_length=128)
     stressLevel = models.PositiveSmallIntegerField()
+    realStressLevel = models.PositiveSmallIntegerField(default=0)
     startTime = models.BigIntegerField()
     endTime = models.BigIntegerField()
     intervention = models.CharField(max_length=128)
@@ -61,6 +62,7 @@ class Event(models.Model):
             'eventId': self.eventId,
             'title': self.title,
             'stressLevel': self.stressLevel,
+            'realStressLevel': self.realStressLevel,
             'startTime': self.startTime,
             'endTime': self.endTime,
             'intervention': self.intervention,

@@ -199,7 +199,8 @@ def handle_event_create(request):
                                 stress_cause=json_body['stressCause'],
                                 repeat_mode=json_body['repeatMode'],
                                 repeat_id=json_body['repeatId'],
-                                event_reminder=json_body['eventReminder']
+                                event_reminder=json_body['eventReminder'],
+                                repeat_till=json_body['repeatTill']
                             ).save()
                         start[x] += 604800000
                         end[x] += 604800000
@@ -221,6 +222,8 @@ def handle_event_edit(request):
             event = Event.objects.get(eventId=json_body['eventId'])
             if 'stressLevel' in json_body:
                 event.stressLevel = json_body['stressLevel']
+            if 'realStressLevel' in json_body:
+                event.repeatId = json_body['realStressLevel']
             if 'title' in json_body:
                 event.title = json_body['title']
             if 'startTime' in json_body and 'endTime' in json_body and not overlaps(
@@ -368,8 +371,11 @@ def handle_evaluation_submit(request):
                                          event__eventId=json_body['eventId']).exists():
                 Evaluation.objects.get(event__owner__username=json_body['username'],
                                        event__eventId=json_body['eventId']).delete()
+            event = Event.objects.get(eventId=json_body['eventId'])
+            event.realStressLevel = json_body['realStressLevel']
+
             Evaluation.objects.create_evaluation(
-                event=Event.objects.get(eventId=json_body['eventId']),
+                event=event,
                 intervention_name=json_body['interventionName'],
                 start_time=json_body['startTime'],
                 end_time=json_body['endTime'],

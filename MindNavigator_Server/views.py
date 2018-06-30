@@ -438,6 +438,7 @@ def handle_survey_fetch(request):
 @api_view(['POST'])
 def handle_survey_submit(request):
     json_body = json.loads(request.body.decode('utf-8'))
+    print(json_body)
     if 'username' in json_body and 'password' in json_body and 'survey1' in json_body and 'survey2' in json_body \
             and 'survey3' in json_body and 'survey4' in json_body and len(json_body['survey1']) == 10 and len(json_body['survey2']) == 16 \
             and len(json_body['survey3']) == 21 and len(json_body['survey4']) == 26:

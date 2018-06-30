@@ -77,9 +77,8 @@ def handle_register(request):
         if User.objects.filter(username=username).exists():
             return Res(data={'result': RES_FAILURE})
         else:
-            user = User.objects.create_user(username=username, password=password, name=name)
-            user.save()
-            Survey.objects.create_survey(user=user).save()
+            User.objects.create_user(username=username, password=password, name=name).save()
+            Survey.objects.create_survey(user=User.objects.get(username=username)).save()
             return Res(data={'result': RES_SUCCESS})
     else:
         return Res(data={'result': RES_BAD_REQUEST, 'reason': 'either of username, password, or name was not passed as a POST argument!'})

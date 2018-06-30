@@ -227,7 +227,7 @@ class SurveyManager(models.Manager):
             s4q23=0,
             s4q24=0,
             s4q25=0,
-            s4q26=06
+            s4q26=0
         )
 
 

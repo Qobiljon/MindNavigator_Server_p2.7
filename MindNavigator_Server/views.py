@@ -1,4 +1,5 @@
 import json
+import random
 import time
 import calendar as cal
 import datetime as dt
@@ -325,23 +326,23 @@ def handle_intervention_create(request):
 
 
 @api_view(['POST'])
-def handle_system_intervention_get(request):
+def handle_system_intervention_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             array = []
             for intervention in Intervention.objects.filter(interventionType=InterventionManager.SYSTEM):
                 array.append(intervention.name)
+            random.shuffle(array)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
             return Res(data={'result': RES_FAILURE})
     else:
-        return Res(data={'result': RES_BAD_REQUEST,
-                         'reason': 'Username, password, or event_id was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username or password was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
-def handle_peer_intervention_get(request):
+def handle_peer_intervention_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):

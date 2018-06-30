@@ -428,7 +428,7 @@ def handle_survey_fetch(request):
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
             user = User.objects.get(username=json_body['username'])
-            return Res(data={'result': RES_SUCCESS, 'survey': Survey.objects.get(user=user)})
+            return Res(data={'result': RES_SUCCESS, 'surveys': Survey.objects.get(user=user).__json__()})
         else:
             return Res(data={'result': RES_FAILURE})
     else:

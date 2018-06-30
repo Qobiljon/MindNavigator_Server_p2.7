@@ -4,7 +4,7 @@ import calendar as cal
 import datetime as dt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response as Res
-from MindNavigator_Server.models import User, Event, Intervention, InterventionManager, Evaluation
+from MindNavigator_Server.models import User, Event, Intervention, InterventionManager, Evaluation, Survey
 from django.db.models import Q
 
 # region Constants
@@ -76,11 +76,11 @@ def handle_register(request):
         if User.objects.filter(username=username).exists():
             return Res(data={'result': RES_FAILURE})
         else:
-            User.objects.create_user(username=username, password=password, name=name)
+            user = User.objects.create_user(username=username, password=password, name=name)
+            Survey.objects.create_survey(user=user, default_vals=True)
             return Res(data={'result': RES_SUCCESS})
     else:
-        return Res(data={'result': RES_BAD_REQUEST,
-                         'reason': 'either of username, password, or name was not passed as a POST argument!'})
+        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'either of username, password, or name was not passed as a POST argument!'})
 
 
 @api_view(['POST'])
@@ -419,3 +419,111 @@ def handle_evaluation_fetch(request):
     else:
         return Res(
             data={'result': RES_BAD_REQUEST, 'reason': 'Some arguments are not present to complete this POST request!'})
+
+
+@api_view(['POST'])
+def handle_survey_fetch(request):
+    json_body = json.loads(request.body.decode('utf-8'))
+    if 'username' in json_body and 'password' in json_body:
+        if is_user_valid(json_body['username'], json_body['password']):
+            user = User.objects.get(username=json_body['username'])
+            return Res(data={'result': RES_SUCCESS, 'survey': Survey.objects.get(user=user)})
+        else:
+            return Res(data={'result': RES_FAILURE})
+    else:
+        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username or password was not passed as a POST argument!'})
+
+
+@api_view(['POST'])
+def handle_survey_submit(request):
+    json_body = json.loads(request.body.decode('utf-8'))
+    if 'username' in json_body and 'password' in json_body and 'survey1' in json_body and 'survey1' in json_body and 'survey2' in json_body \
+            and 'survey3' in json_body and 'survey4' in json_body and len(json_body['survey1']) == 10 and len(json_body['survey2']) == 16 \
+            and len(json_body['survey3'] == 21) and len(json_body['survey4']) == 26:
+        if is_user_valid(json_body['username'], json_body['password']):
+            survey = Survey.objects.get(user__username=json_body['username'])
+
+            survey.date = int(round(time.time() * 1000))
+
+            survey.s1q1 = json_body['survey1'][0],
+            survey.s1q2 = json_body['survey1'][1],
+            survey.s1q3 = json_body['survey1'][2],
+            survey.s1q4 = json_body['survey1'][3],
+            survey.s1q5 = json_body['survey1'][4],
+            survey.s1q6 = json_body['survey1'][5],
+            survey.s1q7 = json_body['survey1'][6],
+            survey.s1q8 = json_body['survey1'][7],
+            survey.s1q9 = json_body['survey1'][8],
+            survey.s1q10 = json_body['survey1'][9],
+
+            survey.s2q1 = json_body['survey2'][0],
+            survey.s2q2 = json_body['survey2'][1],
+            survey.s2q3 = json_body['survey2'][2],
+            survey.s2q4 = json_body['survey2'][3],
+            survey.s2q5 = json_body['survey2'][4],
+            survey.s2q6 = json_body['survey2'][5],
+            survey.s2q7 = json_body['survey2'][6],
+            survey.s2q8 = json_body['survey2'][7],
+            survey.s2q9 = json_body['survey2'][8],
+            survey.s2q10 = json_body['survey2'][9],
+            survey.s2q11 = json_body['survey2'][10],
+            survey.s2q12 = json_body['survey2'][11],
+            survey.s2q13 = json_body['survey2'][12],
+            survey.s2q14 = json_body['survey2'][13],
+            survey.s2q15 = json_body['survey2'][14],
+            survey.s2q16 = json_body['survey2'][15],
+
+            survey.s3q1 = json_body['survey3'][0],
+            survey.s3q2 = json_body['survey3'][1],
+            survey.s3q3 = json_body['survey3'][2],
+            survey.s3q4 = json_body['survey3'][3],
+            survey.s3q5 = json_body['survey3'][4],
+            survey.s3q6 = json_body['survey3'][5],
+            survey.s3q7 = json_body['survey3'][6],
+            survey.s3q8 = json_body['survey3'][7],
+            survey.s3q9 = json_body['survey3'][8],
+            survey.s3q10 = json_body['survey3'][9],
+            survey.s3q11 = json_body['survey3'][10],
+            survey.s3q12 = json_body['survey3'][11],
+            survey.s3q13 = json_body['survey3'][12],
+            survey.s3q14 = json_body['survey3'][13],
+            survey.s3q15 = json_body['survey3'][14],
+            survey.s3q16 = json_body['survey3'][15],
+            survey.s3q17 = json_body['survey3'][16],
+            survey.s3q18 = json_body['survey3'][17],
+            survey.s3q19 = json_body['survey3'][18],
+            survey.s3q20 = json_body['survey3'][19],
+            survey.s3q21 = json_body['survey3'][20],
+
+            survey.s4q1 = json_body['survey4'][0],
+            survey.s4q2 = json_body['survey4'][1],
+            survey.s4q3 = json_body['survey4'][2],
+            survey.s4q4 = json_body['survey4'][3],
+            survey.s4q5 = json_body['survey4'][4],
+            survey.s4q6 = json_body['survey4'][5],
+            survey.s4q7 = json_body['survey4'][6],
+            survey.s4q8 = json_body['survey4'][7],
+            survey.s4q9 = json_body['survey4'][8],
+            survey.s4q10 = json_body['survey4'][9],
+            survey.s4q11 = json_body['survey4'][10],
+            survey.s4q12 = json_body['survey4'][11],
+            survey.s4q13 = json_body['survey4'][12],
+            survey.s4q14 = json_body['survey4'][13],
+            survey.s4q15 = json_body['survey4'][14],
+            survey.s4q16 = json_body['survey4'][15],
+            survey.s4q17 = json_body['survey4'][16],
+            survey.s4q18 = json_body['survey4'][17],
+            survey.s4q19 = json_body['survey4'][18],
+            survey.s4q20 = json_body['survey4'][19],
+            survey.s4q21 = json_body['survey4'][20],
+            survey.s4q22 = json_body['survey4'][21],
+            survey.s4q23 = json_body['survey4'][22],
+            survey.s4q24 = json_body['survey4'][23],
+            survey.s4q25 = json_body['survey4'][24],
+            survey.s4q26 = json_body['survey4'][25]
+
+            return Res(data={'result': RES_SUCCESS})
+        else:
+            return Res(data={'result': RES_FAILURE})
+    else:
+        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or survey elements were not completely passed as a POST argument!'})

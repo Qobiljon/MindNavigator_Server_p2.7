@@ -1,8 +1,7 @@
 import json
-import os
 import random
 import time
-import csv
+import unicodecsv as csv
 import calendar as cal
 import datetime as dt
 
@@ -550,7 +549,7 @@ def handle_log_fetch(request):
         with open('log.csv', 'w') as logfile:
             wr = csv.writer(logfile, quoting=csv.QUOTE_ALL)
             wr.writerow(['THIS \"DATA\" IS EXTRACTED FROM THE DATABASE OF THE MIND-FORECASTER SERVER'])
-            wr.writerow(['EXTRACTION TIME %s' % dt.datetime.now().strftime("%I:%M%p ON %B %d, %Y")])
+            wr.writerow(['EXTRACTION TIME %s' % dt.datetime.now().strftime(u"%I:%M%p ON %B %d, %Y")])
             wr.writerow([])
             wr.writerow([])
             wr.writerow(['1.', 'Events'])
@@ -558,15 +557,33 @@ def handle_log_fetch(request):
                          'Event Start Time', 'Event End Time', 'Intervention Title', 'Intervention Reminder', 'Expected Stress Type',
                          'Expected Stress Cause', 'Is Repeating Event', 'Event Reminder', 'Is Evaluated'])
             for event in Event.objects.all():
-                wr.writerow([event.eventId, event.owner.email, event.owner.username, event.title, event.stressLevel, event.realStressLevel,
-                             to_time(event.startTime), to_time(event.endTime), event.intervention, str(event.interventionReminder),
-                             event.stressType, event.stressCause, event.repeatMode is not Event.NO_REPEAT, event.eventReminder])
+                wr.writerow([
+                    event.eventId,
+                    event.owner.email,
+                    event.owner.username,
+                    event.title,
+                    event.stressLevel,
+                    event.realStressLevel,
+                    to_time(event.startTime),
+                    to_time(event.endTime),
+                    event.intervention,
+                    event.interventionReminder,
+                    event.stressType,
+                    event.stressCause,
+                    event.repeatMode is not Event.NO_REPEAT,
+                    event.eventReminder,
+                    event.evaluated
+                ])
             wr.writerow([])
             wr.writerow([])
             wr.writerow(['2.', 'Interventions Created By Peers'])
             wr.writerow(['Intervention Title', 'Intervention Type', 'Private Owner'])
             for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER):
-                wr.writerow([intervention.name, intervention.interventionType, 'Publicly Shared Intervention' if intervention.privateUsername is None else intervention.privateUsername])
+                wr.writerow([
+                    unicode(intervention.name),
+                    unicode(intervention.interventionType),
+                    'Publicly Shared Intervention' if intervention.privateUsername is None else unicode(intervention.privateUsername)
+                ])
             wr.writerow([])
             wr.writerow([])
             wr.writerow(['3.', 'Event Evaluations'])
@@ -574,15 +591,30 @@ def handle_log_fetch(request):
                          'Intervention Effectiveness', 'Expected Stress Level', 'Real Stress Level',
                          'Expected Stress Cause', 'Real Stress Cause', 'Evaluation Journal'])
             for eval in Evaluation.objects.all():
-                wr.writerow([eval.event.eventId, eval.event.title, to_time(eval.startTime), to_time(eval.endTime), eval.interventionName,
-                             eval.interventionDone, eval.intervEffectiveness, eval.event.stressLevel, eval.realStressLevel,
-                             eval.event.stressCause, eval.realStressCause, eval.journal])
+                wr.writerow([
+                    eval.event.eventId,
+                    eval.event.title,
+                    to_time(eval.startTime),
+                    to_time(eval.endTime),
+                    eval.interventionName,
+                    eval.interventionDone,
+                    eval.intervEffectiveness,
+                    eval.event.stressLevel,
+                    eval.realStressLevel,
+                    eval.event.stressCause,
+                    eval.realStressCause,
+                    eval.journal
+                ])
             wr.writerow([])
             wr.writerow([])
             wr.writerow(['4.', 'Survey'])
-            wr.writerow(["Name", 'Username', 'Filled Date'])
+            wr.writerow(['Name', 'Username', 'Filled Date'])
             for survey in Survey.objects.all():
-                wr.writerow([survey.user.email, survey.user.username, to_time(survey.date)])
+                wr.writerow([
+                    survey.user.email,
+                    survey.user.username,
+                    to_time(survey.date)
+                ])
             wr.writerow([])
             wr.writerow([])
             wr.writerow(['THE END OF EXTRACTED FILE'])

@@ -22,6 +22,7 @@ from MindNavigator_Server.models import Intervention, InterventionManager
 
 urlpatterns = [
     url('admin/', admin.site.urls),
+    url('log_fetch$', views.handle_log_fetch),
     url('user_reg$', views.handle_register),
     url('user_lgn$', views.handle_login),
     url('event_crt$', views.handle_event_create),

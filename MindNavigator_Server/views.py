@@ -1,8 +1,12 @@
 import json
+import os
 import random
 import time
+import csv
 import calendar as cal
 import datetime as dt
+
+from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response as Res
 from MindNavigator_Server.models import User, Event, Intervention, InterventionManager, Evaluation, Survey
@@ -63,6 +67,10 @@ def weekday(millis):
 def add_timedelta(millis, timedelta):
     res = dt.datetime.fromtimestamp(millis / 1000.0) + timedelta
     return int(round(time.mktime(res.timetuple()) * 1000))
+
+
+def to_time(millis):
+    return dt.datetime.fromtimestamp(millis / 1000).strftime('%Y/%m/%d %H:%M')
 
 
 @api_view(['POST'])
@@ -532,3 +540,56 @@ def handle_survey_submit(request):
             return Res(data={'result': RES_FAILURE})
     else:
         return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username, password, or survey elements were not completely passed as a POST argument!'})
+
+
+@api_view(['POST'])
+def handle_log_fetch(request):
+    json_body = json.loads(request.body.decode('utf-8'))
+    if 'username' in json_body and json_body['username'] == u'qobiljon' and 'password' in json_body \
+            and is_user_valid(json_body['username'], json_body['password']):
+        with open('log.csv', 'w') as logfile:
+            wr = csv.writer(logfile, quoting=csv.QUOTE_ALL)
+            wr.writerow(['THIS \"DATA\" IS EXTRACTED FROM THE DATABASE OF THE MIND-FORECASTER SERVER'])
+            wr.writerow(['EXTRACTION TIME %s' % dt.datetime.now().strftime("%I:%M%p ON %B %d, %Y")])
+            wr.writerow([])
+            wr.writerow([])
+            wr.writerow(['1.', 'Events'])
+            wr.writerow(['Event Id', 'Owner name', 'Owner username', 'Title', 'Expected Stress Level', 'Real Stress Level',
+                         'Event Start Time', 'Event End Time', 'Intervention Title', 'Intervention Reminder', 'Expected Stress Type',
+                         'Expected Stress Cause', 'Is Repeating Event', 'Event Reminder', 'Is Evaluated'])
+            for event in Event.objects.all():
+                wr.writerow([event.eventId, event.owner.email, event.owner.username, event.title, event.stressLevel, event.realStressLevel,
+                             to_time(event.startTime), to_time(event.endTime), event.intervention, event.interventionReminder,
+                             event.stressType, event.stressCause, str(event.repeatMode is not Event.NO_REPEAT),
+                             event.eventReminder, str(event.evaluated)])
+            wr.writerow([])
+            wr.writerow([])
+            wr.writerow(['2.', 'Interventions Created By Peers'])
+            wr.writerow(['Intervention Title', 'Intervention Type', 'Private Owner'])
+            for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER):
+                wr.writerow([intervention.name, intervention.interventionType, 'Publicly Shared Intervention' if intervention.privateUsername is None else intervention.privateUsername])
+            wr.writerow([])
+            wr.writerow([])
+            wr.writerow(['3.', 'Event Evaluations'])
+            wr.writerow(['Event Id', 'Event Title', 'Event Start Time', 'Event End Time', 'Intervention Title', 'Intervention Was Applied',
+                         'Intervention Effectiveness', 'Expected Stress Level', 'Real Stress Level',
+                         'Expected Stress Cause', 'Real Stress Cause', 'Evaluation Journal'])
+            for eval in Evaluation.objects.all():
+                wr.writerow([eval.event.eventId, eval.event.title, to_time(eval.startTime), to_time(eval.endTime), eval.interventionName,
+                             eval.interventionDone, eval.intervEffectiveness, eval.event.stressLevel, eval.realStressLevel,
+                             eval.event.stressCause, eval.realStressCause, eval.journal])
+            wr.writerow([])
+            wr.writerow([])
+            wr.writerow(['4.', 'Survey'])
+            wr.writerow(["Name", 'Username', 'Filled Date'])
+            for survey in Survey.objects.all():
+                wr.writerow([survey.user.email, survey.user.username, to_time(survey.date)])
+            wr.writerow([])
+            wr.writerow([])
+            wr.writerow(['THE END OF EXTRACTED FILE'])
+        with open('log.csv', 'r') as logfile:
+            response = HttpResponse(logfile.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=log.csv'
+            return response
+    else:
+        return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username or password was not passed as a POST argument!'})

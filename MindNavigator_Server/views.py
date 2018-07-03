@@ -350,6 +350,7 @@ def handle_peer_intervention_fetch(request):
             for intervention in Intervention.objects.filter(interventionType=InterventionManager.PEER,
                                                             privateUsername=None):
                 array.append(intervention.name)
+            random.shuffle(array)
             return Res(data={'result': RES_SUCCESS, 'names': array})
         else:
             return Res(data={'result': RES_FAILURE})

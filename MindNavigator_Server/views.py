@@ -588,7 +588,8 @@ def handle_log_fetch(request):
             wr.writerow([])
             wr.writerow(['THE END OF EXTRACTED FILE'])
         with open('log.csv', 'r') as logfile:
-            response = HttpResponse(logfile.read(), content_type="application/vnd.ms-excel")
+            response = HttpResponse(logfile.read())
+            response['content_type'] = 'application/liquid; charset=utf-8'
             response['Content-Disposition'] = 'inline; filename=log.csv'
             return response
     else:

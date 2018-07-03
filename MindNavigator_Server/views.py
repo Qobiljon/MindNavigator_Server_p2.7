@@ -560,9 +560,8 @@ def handle_log_fetch(request):
             for event in Event.objects.all():
                 wr.writerow([event.eventId, event.owner.email, event.owner.username, event.title, event.stressLevel, event.realStressLevel,
                              to_time(event.startTime), to_time(event.endTime), event.intervention, str(event.interventionReminder),
-                             event.stressType, event.stressCause, str(event.repeatMode is not Event.NO_REPEAT),
-                             event.eventReminder,
-                             str(event.evaluated)])
+                             event.stressType, event.stressCause, event.repeatMode is not Event.NO_REPEAT, event.eventReminder,
+                             event.evaluated])
             wr.writerow([])
             wr.writerow([])
             wr.writerow(['2.', 'Interventions Created By Peers'])

@@ -588,9 +588,6 @@ def handle_log_fetch(request):
             wr.writerow([])
             wr.writerow(['THE END OF EXTRACTED FILE'])
         with open('log.csv', 'r') as logfile:
-            response = HttpResponse(logfile.read())
-            response['content_type'] = 'application/liquid; charset=utf-8'
-            response['Content-Disposition'] = 'inline; filename=log.csv'
-            return response
+            return Res(data={'result': RES_SUCCESS, 'data': logfile.read().decode(encoding='utf-8')})
     else:
         return Res(data={'result': RES_BAD_REQUEST, 'reason': 'Username or password was not passed as a POST argument!'})

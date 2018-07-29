@@ -449,7 +449,6 @@ def handle_survey_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
     if 'username' in json_body and 'password' in json_body:
         if is_user_valid(json_body['username'], json_body['password']):
-            User.objects.get(user__username=json_body['username'])
             return Res(data={'result': RES_SUCCESS, 'surveys': Survey.__questions_json__()})
         else:
             return Res(data={'result': RES_FAILURE})
@@ -590,7 +589,7 @@ def handle_survey_submit(request):
 @api_view(['POST'])
 def handle_log_fetch(request):
     json_body = json.loads(request.body.decode('utf-8'))
-    if 'username' in json_body and json_body['username'] == u'qobiljon' and 'password' in json_body \
+    if 'username' in json_body and json_body['username'] == u'kwangyoung' and 'password' in json_body \
             and is_user_valid(json_body['username'], json_body['password']):
         with open('log.csv', 'w') as logfile:
             wr = csv.writer(logfile, quoting=csv.QUOTE_ALL)

@@ -5,14 +5,16 @@ from django.db import models
 
 
 class UserManager(models.Manager):
+
     def create_user(self, username, password, name):
-        return self.create(username=username, password=password, email=name)
+        return self.create(username=username, password=password, email=name, usage=0)
 
 
 class User(models.Model):
     username = models.CharField(max_length=32, primary_key=True)
     password = models.CharField(max_length=32)
     email = models.CharField(max_length=64)
+    usage = models.IntegerField()
     objects = UserManager()
 
 
@@ -84,14 +86,16 @@ class InterventionManager(models.Manager):
     PEER = 'peer'
     SYSTEM = 'system'
 
-    def create_intervention(self, name, intervention_type, private_username=None):
-        return self.create(name=name, interventionType=intervention_type, privateUsername=private_username)
+    def create_intervention(self, name, intervention_type, creation_method, private_username=None):
+        return self.create(name=name, interventionType=intervention_type, creationMethod=creation_method,
+                           privateUsername=private_username)
 
 
 class Intervention(models.Model):
     name = models.CharField(max_length=128)
     interventionType = models.CharField(max_length=6)
     privateUsername = models.CharField(max_length=32, null=True, default=None)
+    creationMethod = models.CharField(max_length=6)
     objects = InterventionManager()
 
 
@@ -149,7 +153,7 @@ class Evaluation(models.Model):
 class SurveyManager(models.Manager):
     def create_survey(self, user):
         return self.create(
-            user=user,
+            usern=user,
             date=int(round(time.time() * 1000)),
 
             s1q1=0,
@@ -179,6 +183,32 @@ class SurveyManager(models.Manager):
             s2q14=0,
             s2q15=0,
             s2q16=0,
+            s2q17=0,
+            s2q18=0,
+            s2q19=0,
+            s2q20=0,
+            s2q21=0,
+            s2q22=0,
+            s2q23=0,
+            s2q24=0,
+            s2q25=0,
+            s2q26=0,
+            s2q27=0,
+            s2q28=0,
+            s2q29=0,
+            s2q30=0,
+            s2q31=0,
+            s2q32=0,
+            s2q33=0,
+            s2q34=0,
+            s2q35=0,
+            s2q36=0,
+            s2q37=0,
+            s2q38=0,
+            s2q39=0,
+            s2q40=0,
+            s2q41=0,
+            s2q42=0,
 
             s3q1=0,
             s3q2=0,
@@ -201,38 +231,46 @@ class SurveyManager(models.Manager):
             s3q19=0,
             s3q20=0,
             s3q21=0,
-
-            s4q1=0,
-            s4q2=0,
-            s4q3=0,
-            s4q4=0,
-            s4q5=0,
-            s4q6=0,
-            s4q7=0,
-            s4q8=0,
-            s4q9=0,
-            s4q10=0,
-            s4q11=0,
-            s4q12=0,
-            s4q13=0,
-            s4q14=0,
-            s4q15=0,
-            s4q16=0,
-            s4q17=0,
-            s4q18=0,
-            s4q19=0,
-            s4q20=0,
-            s4q21=0,
-            s4q22=0,
-            s4q23=0,
-            s4q24=0,
-            s4q25=0,
-            s4q26=0
+            s3q22=0,
+            s3q23=0,
+            s3q24=0,
+            s3q25=0,
+            s3q26=0,
+            s3q27=0,
+            s3q28=0,
+            s3q29=0,
+            s3q30=0,
+            s3q31=0,
+            s3q32=0,
+            s3q33=0,
+            s3q34=0,
+            s3q35=0,
+            s3q36=0,
+            s3q37=0,
+            s3q38=0,
+            s3q39=0,
+            s3q40=0,
+            s3q41=0,
+            s3q42=0,
+            s3q43=0,
+            s3q44=0,
+            s3q45=0,
+            s3q46=0,
+            s3q47=0,
+            s3q48=0,
+            s3q49=0,
+            s3q50=0,
+            s3q51=0,
+            s3q52=0,
+            s3q53=0,
+            s3q54=0,
+            s3q55=0,
+            s3q56=0
         )
 
 
 class Survey(models.Model):
-    user = models.OneToOneField(to=User)
+    user = models.ForeignKey(to=User)
     date = models.BigIntegerField()
 
     s1q1 = models.SmallIntegerField()
@@ -245,7 +283,6 @@ class Survey(models.Model):
     s1q8 = models.SmallIntegerField()
     s1q9 = models.SmallIntegerField()
     s1q10 = models.SmallIntegerField()
-
     s2q1 = models.SmallIntegerField()
     s2q2 = models.SmallIntegerField()
     s2q3 = models.SmallIntegerField()
@@ -262,7 +299,32 @@ class Survey(models.Model):
     s2q14 = models.SmallIntegerField()
     s2q15 = models.SmallIntegerField()
     s2q16 = models.SmallIntegerField()
-
+    s2q17 = models.SmallIntegerField()
+    s2q18 = models.SmallIntegerField()
+    s2q19 = models.SmallIntegerField()
+    s2q20 = models.SmallIntegerField()
+    s2q21 = models.SmallIntegerField()
+    s2q22 = models.SmallIntegerField()
+    s2q23 = models.SmallIntegerField()
+    s2q24 = models.SmallIntegerField()
+    s2q25 = models.SmallIntegerField()
+    s2q26 = models.SmallIntegerField()
+    s2q27 = models.SmallIntegerField()
+    s2q28 = models.SmallIntegerField()
+    s2q29 = models.SmallIntegerField()
+    s2q30 = models.SmallIntegerField()
+    s2q31 = models.SmallIntegerField()
+    s2q32 = models.SmallIntegerField()
+    s2q33 = models.SmallIntegerField()
+    s2q34 = models.SmallIntegerField()
+    s2q35 = models.SmallIntegerField()
+    s2q36 = models.SmallIntegerField()
+    s2q37 = models.SmallIntegerField()
+    s2q38 = models.SmallIntegerField()
+    s2q39 = models.SmallIntegerField()
+    s2q40 = models.SmallIntegerField()
+    s2q41 = models.SmallIntegerField()
+    s2q42 = models.SmallIntegerField()
     s3q1 = models.SmallIntegerField()
     s3q2 = models.SmallIntegerField()
     s3q3 = models.SmallIntegerField()
@@ -284,119 +346,159 @@ class Survey(models.Model):
     s3q19 = models.SmallIntegerField()
     s3q20 = models.SmallIntegerField()
     s3q21 = models.SmallIntegerField()
-
-    s4q1 = models.SmallIntegerField()
-    s4q2 = models.SmallIntegerField()
-    s4q3 = models.SmallIntegerField()
-    s4q4 = models.SmallIntegerField()
-    s4q5 = models.SmallIntegerField()
-    s4q6 = models.SmallIntegerField()
-    s4q7 = models.SmallIntegerField()
-    s4q8 = models.SmallIntegerField()
-    s4q9 = models.SmallIntegerField()
-    s4q10 = models.SmallIntegerField()
-    s4q11 = models.SmallIntegerField()
-    s4q12 = models.SmallIntegerField()
-    s4q13 = models.SmallIntegerField()
-    s4q14 = models.SmallIntegerField()
-    s4q15 = models.SmallIntegerField()
-    s4q16 = models.SmallIntegerField()
-    s4q17 = models.SmallIntegerField()
-    s4q18 = models.SmallIntegerField()
-    s4q19 = models.SmallIntegerField()
-    s4q20 = models.SmallIntegerField()
-    s4q21 = models.SmallIntegerField()
-    s4q22 = models.SmallIntegerField()
-    s4q23 = models.SmallIntegerField()
-    s4q24 = models.SmallIntegerField()
-    s4q25 = models.SmallIntegerField()
-    s4q26 = models.SmallIntegerField()
+    s3q22 = models.SmallIntegerField()
+    s3q23 = models.SmallIntegerField()
+    s3q24 = models.SmallIntegerField()
+    s3q25 = models.SmallIntegerField()
+    s3q26 = models.SmallIntegerField()
+    s3q27 = models.SmallIntegerField()
+    s3q28 = models.SmallIntegerField()
+    s3q29 = models.SmallIntegerField()
+    s3q30 = models.SmallIntegerField()
+    s3q31 = models.SmallIntegerField()
+    s3q32 = models.SmallIntegerField()
+    s3q33 = models.SmallIntegerField()
+    s3q34 = models.SmallIntegerField()
+    s3q35 = models.SmallIntegerField()
+    s3q36 = models.SmallIntegerField()
+    s3q37 = models.SmallIntegerField()
+    s3q38 = models.SmallIntegerField()
+    s3q39 = models.SmallIntegerField()
+    s3q40 = models.SmallIntegerField()
+    s3q41 = models.SmallIntegerField()
+    s3q42 = models.SmallIntegerField()
+    s3q43 = models.SmallIntegerField()
+    s3q44 = models.SmallIntegerField()
+    s3q45 = models.SmallIntegerField()
+    s3q46 = models.SmallIntegerField()
+    s3q47 = models.SmallIntegerField()
+    s3q48 = models.SmallIntegerField()
+    s3q49 = models.SmallIntegerField()
+    s3q50 = models.SmallIntegerField()
+    s3q51 = models.SmallIntegerField()
+    s3q52 = models.SmallIntegerField()
+    s3q53 = models.SmallIntegerField()
+    s3q54 = models.SmallIntegerField()
+    s3q55 = models.SmallIntegerField()
+    s3q56 = models.SmallIntegerField()
 
     objects = SurveyManager()
 
-    def __json__(self):
+    @staticmethod
+    def __questions_json__():
         return {
-            'date': self.date,
-            'name': self.user.email,
             'survey1': [
-                {'key': u'예상치 않게 생긴 일 때문에 속상한 적이 얼마나 자주 있었습니까?', 'value': self.s1q1},
-                {'key': u'중요한 일을 조절할 수 없다고 느낀 적이 얼마나 자주 있었습니까?', 'value': self.s1q2},
-                {'key': u'불안하고 스트레스받았다고 느낀 적이 얼마나 자주 있었습니까?', 'value': self.s1q3},
-                {'key': u'개인적인 문제를 잘 처리할 수 있다고 자신감을 가진 적이 얼마나 자주 있었습니까?', 'value': self.s1q4},
-                {'key': u'일이 내 뜻대로 진행되고 있다고 느낀 적이 얼마나 자주 있었습니까?', 'value': self.s1q5},
-                {'key': u'자신이 해야 할 모든 일에 잘 대처할 수 없었던 적이 얼마나 자주 있었습니까?', 'value': self.s1q6},
-                {'key': u'일상에서 짜증나는 것을 잘 조절할 수 있었던 적이 얼마나 자주 있었습니까?', 'value': self.s1q7},
-                {'key': u'자신이 일을 잘 해냈다고 느낀 적이 얼마나 자주 있었습니까?', 'value': self.s1q8},
-                {'key': u'자신의 능력으로는 어떻게 해 볼 수 없는 일 때문에 화가 난 적이 얼마나 자주 있었습니까?', 'value': self.s1q9},
-                {'key': u'어려운 일이 너무 많아져서 극복할 수 없다고 느낀 적이 얼마나 자주 있었습니까?', 'value': self.s1q10}
+                {'key': u'예상치 않게 생긴 일 때문에 속상한 적이 얼마나 자주 있었습니까?'},
+                {'key': u'중요한 일을 조절할 수 없다고 느낀 적이 얼마나 자주 있었습니까?'},
+                {'key': u'불안하고 스트레스받았다고 느낀 적이 얼마나 자주 있었습니까?'},
+                {'key': u'개인적인 문제를 잘 처리할 수 있다고 자신감을 가진 적이 얼마나 자주 있었습니까?'},
+                {'key': u'일이 내 뜻대로 진행되고 있다고 느낀 적이 얼마나 자주 있었습니까?'},
+                {'key': u'자신이 해야 할 모든 일에 잘 대처할 수 없었던 적이 얼마나 자주 있었습니까?'},
+                {'key': u'일상에서 짜증나는 것을 잘 조절할 수 있었던 적이 얼마나 자주 있었습니까?'},
+                {'key': u'자신이 일을 잘 해냈다고 느낀 적이 얼마나 자주 있었습니까?'},
+                {'key': u'자신의 능력으로는 어떻게 해 볼 수 없는 일 때문에 화가 난 적이 얼마나 자주 있었습니까?'},
+                {'key': u'어려운 일이 너무 많아져서 극복할 수 없다고 느낀 적이 얼마나 자주 있었습니까?'}
             ],
             'survey2': [
-                {'key': u'내가 무슨 일을 할 때 내 모든 관심을 쏟는다.', 'value': self.s2q1},
-                {'key': u'나는 내가 좋아하지 않아도 필요한 일에는 집중한다.', 'value': self.s2q2},
-                {'key': u'나는 목표를 달성할 때 내가 무엇을 해야하는지에 대해 잘 알고있다.', 'value': self.s2q3},
-                {'key': u'나는 목표를 달성할 때 정기적으로 진행 상황을 추적한다.', 'value': self.s2q4},
-                {'key': u'나는 무언가 열심히 일할 때 내 생각에 세심한 주의를 기울인다.', 'value': self.s2q5},
-                {'key': u'나는 목표를 달성할 때 내가 나의 행동을 추적 할 수 있음을 안다.', 'value': self.s2q6},
-                {'key': u'내 자신을 위해 중요한 목표를 설정할 때, 나는 보통 그것을 성취한다.', 'value': self.s2q7},
-                {'key': u'나는 나에게 일어나는 대부분의 문제들에 대해 분명한 계획을 세울 수 있다.', 'value': self.s2q8},
-                {'key': u'내가 성취 한 목표는 나에게 많은 의미가있다.', 'value': self.s2q9},
-                {'key': u'나는 계획을 세우는 것이 중요하다고 생각한다.', 'value': self.s2q10},
-                {'key': u'내 자신에 대한 기준이 분명하고, 이는 내가 어떻게 일을 하고있는지 판단 할 수있게 해준다.', 'value': self.s2q11},
-                {'key': u'내가 무언가 진전이 있을때 나 자신을 축하한다.', 'value': self.s2q12},
-                {'key': u'나는 나중에 나 자신을 즐겁게하기 위해 힘들게 한다.', 'value': self.s2q13},
-                {'key': u'14 다른 사람들이 나를 칭찬하지 않을 때에도 나는 조용히 나를 칭찬한다.', 'value': self.s2q14},
-                {'key': u'내가 옳은 일을 할 때, 나는 그 느낌을 즐기기 위해 시간을 들인다.', 'value': self.s2q15},
-                {'key': u'나는 진전이있을 때 특별한 것을 나에게 준다.', 'value': self.s2q16}
+                {'key': u'대다수의 사람들과 의견이 다를 경우에도, 내 의견을 분명히 말하는 편이다.'},
+                {'key': u'나에게 주어진 상황은 내게 책임이 있다고 생각한다.'},
+                {'key': u'현재의 내 활동반경(생활영역)을 넓힐 생각이 없다.'},
+                {'key': u'대다수의 사람들은 나를 사랑스럽고 애정어리게 본다.'},
+                {'key': u'그저 하루하루를 살아가고 있을 뿐 장래에 대해서는 별로 생각하지 않는다.'},
+                {'key': u'살아 온 내 인생을 돌이켜 볼 때 현재의 결과에 만족한다.'},
+                {'key': u'는 무슨 일을 결정하는 데 있어 다른 사람들의 영향을 받지 않는 편이다.'},
+                {'key': u'매일매일 해야 하는 일들이 힘겹다.'},
+                {'key': u'나 자신과 인생살이에 자극을 줄 만한 새로운 경험을 하는 것이 중요하다고 생각한다.'},
+                {'key': u'남들과 친밀한 인간관계를 유지하는 것이 어렵고 힘들다.'},
+                {'key': u'나는 삶의 방향과 목적에 대한 감각을 가지고 있다.'},
+                {'key': u'나 자신에 대해 자부심과 자신감을 갖고 있다.'},
+                {'key': u'나는 다른 사람들이 나를 어떻게 생각하는지 걱정하는 경향이 있다.'},
+                {'key': u'나는 주변의 사람들과 지역사회에 잘 어울리지 않는다.'},
+                {'key': u'지난 세월을 되돌아 보면, 내 자신이 크게 발전하지 못했다고 생각된다.'},
+                {'key': u'나의 고민을 털어놓을 만한 가까운 친구가 별로 없어 가끔 외로움을 느낀다.'},
+                {'key': u'가끔 매일 하는 일들이 사소하고 중요하지 않은 것처럼 느껴진다.'},
+                {'key': u'내가 아는 많은 사람들은 인생에서 나보다 더 많은 것을 성취하는 것 같다.'},
+                {'key': u'나는 강한 의견을 가진 사람으로부터 영향을 받는 편이다.'},
+                {'key': u'매일의 생활에서 내가 해야 할 책임들을 잘 해내고 있다.'},
+                {'key': u'그동안 한 개인으로서 크게 발전해 왔다고 생각한다.'},
+                {'key': u'가족이나 친구들과 친밀한 대화를 나누는 것을 즐긴다.'},
+                {'key': u'내 인생에서 무엇을 성취하려고 하는지 잘 모르겠다.'},
+                {'key': u'내 성격의 거의 모든 면을 좋아한다.'},
+                {'key': u'내 의견이 비록 다른 여러 사람들의 의견과 반대되는 경우에도, 나는 내 의견이 옳다고 확신한다.'},
+                {'key': u'내가 해야 할 일들이 힘겹게 느껴질 때가 있다.'},
+                {'key': u'현재의 생활방식을 바꿔야 할 새로운 상황에 처하는 것을 싫어한다.'},
+                {'key': u'사람들은 나를 다른사람들에게 기꺼이 시간을 내어줄 수 있는 사람으로 묘사한다.'},
+                {'key': u'미래의 계획을 짜고 그 계획을 실현시키려고 노력하는 것을 즐긴다.'},
+                {'key': u'많은 면에서 내가 성취한 것에 대해 실망을 느낀다.'},
+                {'key': u'논쟁의 여지가 있는 문제들에 대해서 내 자신의 의견을 내세우지 못한다.'},
+                {'key': u'생활을 만족스럽게 꾸려 나가는 것이 쉽지 않다.'},
+                {'key': u'나에게 있어서 삶은 끊임없이 배우고, 변화하고, 성장하는 과정이었다.'},
+                {'key': u'다른 사람들과 다정하고 신뢰깊은 관계를 별로 경험하지 못했다.'},
+                {'key': u'나는 인생목표를 가지고 살아간다.'},
+                {'key': u'나는 나에 대해 다른사람들이 스스로 느끼는 것 만큼 긍정적이지 않다.'},
+                {'key': u'내 스스로 정한 기준에 의해 내 자신을 평가하지, 남들의 기준에 의해 평가하지 않는다.'},
+                {'key': u'내 가정과 생활방식을 내 맘에 들도록 꾸려올 수 있었다.'},
+                {'key': u'내 인생을 크게 개선하거나 바꾸겠다는 생각은 오래 전에 버렸다.'},
+                {'key': u'내 친구들은 믿을 수 있고, 그들도 나를 믿을 수 있다고 생각한다.'},
+                {'key': u'나는 마치 내가 인생에서 해야 할 모든 것을 다한것처럼 느낀다.'},
+                {'key': u'내 자신을 친구나 친지들과 비교할 때면 내 자신에 대해 흐뭇하게 느껴진다.'}
             ],
             'survey3': [
-                {'key': u'나는 내 삶을 어떻게 살아갈지에 대한 결정을 자유롭게 할 수 있습니다.', 'value': self.s3q1},
-                {'key': u'나는 다른 사람들과 상호 작용하는 것을 매우 좋아합니다.', 'value': self.s3q2},
-                {'key': u'종종, 나는 실력이 있다고 느끼지 않습니다.', 'value': self.s3q3},
-                {'key': u'나는 내 인생에서 압박감을 느낍니다.', 'value': self.s3q4},
-                {'key': u'내가 아는 사람들은 나에게 내가 하는 것을 잘하고있다고 말해줍니다.', 'value': self.s3q5},
-                {'key': u'나는 내가 연락하는 사람들과 잘 지냅니다.', 'value': self.s3q6},
-                {'key': u'나는 거의 내 자신에게 집중하고 많은 사회적 접촉이 없습니다.', 'value': self.s3q7},
-                {'key': u'나는 내 생각과 의견을 자유롭게 표현할 수 있습니다.', 'value': self.s3q8},
-                {'key': u'나는 정기적으로 상호 작용하는 사람들이 내 친구들이라고 생각합니다.', 'value': self.s3q9},
-                {'key': u'나는 최근에 흥미로운 새로운 기술을 배울 수 있었습니다.', 'value': self.s3q10},
-                {'key': u'나는 일상생활에서 내가 들은것은 자주 해야만 합니다.', 'value': self.s3q11},
-                {'key': u'내 인생의 사람들은 나에 대해 관심이 있습니다.', 'value': self.s3q12},
-                {'key': u'나는 요즘 내가 하는 일에서 성취감을 느낍니다.', 'value': self.s3q13},
-                {'key': u'나와 매일 상호 작용하는 사람들은 나의 감정을 고려하는 경향이 있습니다.', 'value': self.s3q14},
-                {'key': u'내 인생에서 나는 내가 얼마나 능력 있는지 보여줄 기회를 많이 얻지 못합니다.', 'value': self.s3q15},
-                {'key': u'내가 가까이 지내는 사람들이 별로 없습니다.', 'value': self.s3q16},
-                {'key': u'나는 일상 생활에서 온전히 내 자신이 될 수 있다고 느낍니다.', 'value': self.s3q17},
-                {'key': u'정기적으로 교류하는 사람들은 나를 좋아하는 것처럼 보이지 않습니다.', 'value': self.s3q18},
-                {'key': u'나는 종종 매우 유능하다고 느끼지 않는다.', 'value': self.s3q19},
-                {'key': u'일상 생활에서 어떻게 해야할 지에 대해 스스로 결정할 기회는 별로 없습니다.', 'value': self.s3q20},
-                {'key': u'사람들은 일반적으로 나에게 꽤 친절합니다. ', 'value': self.s3q21}
-            ],
-            'survey4': [
-                {'key': u'우울해지는 것에서 벗어나기', 'value': self.s4q1},
-                {'key': u'자신에게 긍정적으로 말하기', 'value': self.s4q2},
-                {'key': u'변경할 수있는 항목과 변경할 수없는 항목을 정렬하기', 'value': self.s4q3},
-                {'key': u'친구 및 가족으로부터 감정적인 지지 얻기', 'value': self.s4q4},
-                {'key': u'나의 가장 어려운 문제에 대한 해결책을 찾기', 'value': self.s4q5},
-                {'key': u'혼란스러운 문제를 작은 부분으로 나누기', 'value': self.s4q6},
-                {'key': u'스트레스 받을 때 옵션을 열어두기', 'value': self.s4q7},
-                {'key': u'문제에 직면했을 때 행동 계획을 세우고 따르기', 'value': self.s4q8},
-                {'key': u'새로운 취미 또는 레크리에이션을 개발하기', 'value': self.s4q9},
-                {'key': u'불쾌한 생각을 잊어 버리기', 'value': self.s4q10},
-                {'key': u'부정적인 상황에서 좋은 점을 찾기', 'value': self.s4q11},
-                {'key': u'슬픈 감정에 머무르지 않기', 'value': self.s4q12},
-                {'key': u'격렬한 논쟁 중에 타인의 관점에서 바라보기', 'value': self.s4q13},
-                {'key': u'첫 번째 솔루션이 작동하지 않는 경우 문제에 대한 다른 솔루션 시도', 'value': self.s4q14},
-                {'key': u'불쾌한 생각으로 화가나는 것에서 벗어나기', 'value': self.s4q15},
-                {'key': u'새 친구 사귀기', 'value': self.s4q16},
-                {'key': u'필요한 것들을 도와 줄 친구 사귀기', 'value': self.s4q17},
-                {'key': u'낙심할 때 나에게 긍정적인 행동 하기', 'value': self.s4q18},
-                {'key': u'불쾌한 생각을 버리기', 'value': self.s4q19},
-                {'key': u'한 번에 한개의 문제 생각하기', 'value': self.s4q20},
-                {'key': u'즐거운 활동이나 장소를 시각화하기', 'value': self.s4q21},
-                {'key': u'외로움을 느끼지 않게하기', 'value': self.s4q22},
-                {'key': u'기도하거나 명상하기', 'value': self.s4q23},
-                {'key': u'지역 사회 단체로부터 감정적인 지지 얻기', 'value': self.s4q24},
-                {'key': u'기준을 세우고 내가 원하는 것을 위해 싸우기', 'value': self.s4q25},
-                {'key': u'압박감을 느낄 때 급하게 행동하는 충동 막기', 'value': self.s4q26}
+                {'key': u'문제를 해결하려고 노력할 때 나는 직감을 믿으며 처음 떠오른 해결책을 적용한다.'},
+                {'key': u'직장 상사, 동료, 배우자, 자녀와 미리 계획한 대화를 나눌 때도 나는 언제가 감정적으로 대응한다.'},
+                {'key': u'앞으로의 건강이 걱정스럽다.'},
+                {'key': u'당면한 과제에 집중하지 못하게 방해하는 어떤 것도 능숙하게 차단한다.'},
+                {'key': u'첫 번째 해결책이 효과가 없으면 원점으로 돌아가서 문제가 해결될 때까지 다른 해결책을 끊임없이 시도한다.'},
+                {'key': u'호기심이 많다.'},
+                {'key': u'과제에 집중하게 도와줄 긍정적인 감정을 활용하지 못한다.'},
+                {'key': u'새로운 것을 시도하기를 좋아한다.'},
+                {'key': u'도전적이고 어려운 일보다는 자신있고 쉬운 일을 하는 것이 더 좋다.'},
+                {'key': u'사람들 표정을 보면 그가 어떤 감정을 느끼는지 알아차린다.'},
+                {'key': u'일이 잘 안풀리면 포기한다.'},
+                {'key': u'문제가 생기면 여러가지 해결책을 강구한 후 문제를 해결하려고 노력한다.'},
+                {'key': u'역경에 처할 때 감정을 통제할 수 있다.'},
+                {'key': u'나에 대한 다른 사람들 생각은 내 행동에 영향을 미치지 못한다.'},
+                {'key': u'문제가 일어나는 순간, 맨 처음에 떠오르는 생각이 무엇인지 알고있다.'},
+                {'key': u'내가 유일한 책임지가 아닌 상황이 가장 편안하다.'},
+                {'key': u'내 능력보다 타인의 능력에 의지할 수 있는 상황을 선호한다.'},
+                {'key': u'언제나 문제를 해결할 수는 없지만 해결할 수 있다고 믿는 것이 더 낫다.'},
+                {'key': u'문제가 일어나면 문제의 원인부터 철저히 파악한 후 해결을 시도한다.'},
+                {'key': u'직장이나 가정에서 나는 내 문제 해결 능력을 의심한다.'},
+                {'key': u'내가 통제할 수 없는 요인들에 대해 숙고하는데 시간을 허비하지 않는다.'},
+                {'key': u'변함없이 단순한 일상적인 일을 하는 것을 좋아한다.'},
+                {'key': u'내 감정에 휩쓸린다.'},
+                {'key': u'사람들이 느끼는 감정의 원인을 간파하지 못한다.'},
+                {'key': u'내가 어떤 생각을 하고 그것이 내 감정에 어떤 영향을 미치는지 잘 파악한다.'},
+                {'key': u'누군가에게 화가 나도 일단 마음을 진정하고 그것에 관해 대화할 알맞은 순간까지 기다릴 수 있다.'},
+                {'key': u'어떤 문제에 누군가 과잉 반응을 하면 그날 그 사람이 단지 기분이 나빠서 그런 거라고 생각한다.'},
+                {'key': u'나는 대부분의 일을 잘 해낼 것이다.'},
+                {'key': u'사람들은 문제 해결에 도움을 얻으려고 자주 나를 찾는다.'},
+                {'key': u'사람들이 특정 방식으로 대응하는 이류를 간파하지 못한다.'},
+                {'key': u'내 감정이 가정, 학교, 직장에서의 집중력에 영향을 미친다.'},
+                {'key': u'힘든 일에는 언제나 보상이 따른다.'},
+                {'key': u'과제를 완수한 후 부정적인 평가를 받을까 봐 걱정한다.'},
+                {'key': u'누군가 슬퍼하거나 분노하거나 당혹스러워할 때 그 사람이 어떤 생각을 하고 있는지 정확히 알고 있다.'},
+                {'key': u'새로운 도전을 좋아하지 않는다.'},
+                {'key': u'직업, 학업, 재정과 관련해서 미리 계획하지 않는다.'},
+                {'key': u'동료가 흥분할 때 그 원인을 꽤 정확하게 알아차린다.'},
+                {'key': u'어떤 일이든 미리 계획하기보다는 즉흥적으로 하는 것을 좋아한다.그것이 별로 효과적이지 않아도 그렇다.'},
+                {'key': u'대부분의 문제는 내가 통제할 수 없는 상황 때문에 일어난다.'},
+                {'key': u'도전은 나 자신이 성장하고 배우는 한 가지 방법이다.'},
+                {'key': u'내가 사건과 상황을 오해하고 있다는 말을 들은 적이 있다.'},
+                {'key': u'누군가 내게 화를 내면 대응하기 전에 그의 말을 귀 기울여 듣는다.'},
+                {'key': u'내 미래에 대해 생각할 때 성공한 내 모습이 상상되지 않는다.'},
+                {'key': u'문제가 일어날 때 내가 속단해 버린다는 말을 들은 적이 있다.'},
+                {'key': u'새로운 사람들을 만나는 것이 불편하다.'},
+                {'key': u'책이나 영화에 쉽게 몰입한다.'},
+                {'key': u'"예방이 치료보다 낫다."는 속담을 믿는다.'},
+                {'key': u'거의 모든 상황에서 문제의 진짜 원인을 잘 파악한다.'},
+                {'key': u'훌륭한 대처 기술을 갖고 있으며 대부분의 문제에 잘 대응한다.'},
+                {'key': u'배우자나 가까운 친구들은 내가 그들을 이해하지 못한다고 말한다.'},
+                {'key': u'판에 박힌 일과를 처리할 때 가장 편안하다.'},
+                {'key': u'문제는 최대한 빨리 해결하는 것이 중요하다.설령 그 문제를 충분히 파악하지 못하더라도 그렇다.'},
+                {'key': u'어려운 상황에 처할 때 나는 그것이 잘 해결될 거라고 자신한다.'},
+                {'key': u'동료와 친구들은 내가 그들 말을 경청하지 않는다고 말한다.'},
+                {'key': u'어떤 것이 갖고 싶으면 즉이 나가서 그것을 산다.'},
+                {'key': u'동료나 가족과 "민감한"주제에 대해 의논할 때 감정을 자제할 수 있다.'}
             ]
         }
